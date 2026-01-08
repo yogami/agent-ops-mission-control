@@ -63,9 +63,59 @@ export default function HomePage() {
             <Link href="/discover" className="btn-primary">
               Discover Agents
             </Link>
-            <a href="#fleet" className="btn-secondary">
-              View Fleet
-            </a>
+            <Link href="/demo/zk-sla" className="btn-secondary">
+              Interactive Demo
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Regulated Industries Focus */}
+      <section className="py-24 px-6 border-t border-[var(--border)] bg-[var(--surface-1)]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Built for Regulated Industries</h2>
+              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+                Whether you are building healthcare agents subject to MDR/GDPR or financial bots requiring strict audit trails, AgentOps Platform provides the zero-trust primitives you need.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {[
+                  { id: '01', title: 'Digital Health', desc: 'Compliance with DiGA & HIPAA standards.', color: 'text-[var(--primary)]' },
+                  { id: '02', title: 'FinTech', desc: 'Strict non-repudiation and audit logs.', color: 'text-[var(--secondary)]' },
+                  { id: '03', title: 'Government', desc: 'Sovereign agent networks via DIDs.', color: 'text-emerald-500' },
+                  { id: '04', title: 'Enterprise AI', desc: 'Cross-department semantic alignment.', color: 'text-amber-500' },
+                ].map((item) => (
+                  <div key={item.id} className="flex items-start gap-4">
+                    <div className={`${item.color} text-xl font-bold font-mono`}>{item.id}</div>
+                    <div>
+                      <h4 className="text-white font-semibold mb-1">{item.title}</h4>
+                      <p className="text-sm text-gray-500">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex-1 w-full max-w-xl">
+              <div className="glass-card p-8 border-[var(--primary)]/20 relative">
+                <div className="space-y-4">
+                  <div className="h-1.5 w-24 bg-[var(--primary)]/40 rounded-full" />
+                  <div className="h-4 w-full bg-white/5 rounded animate-pulse" />
+                  <div className="h-4 w-5/6 bg-white/5 rounded animate-pulse delay-75" />
+                  <div className="h-4 w-4/6 bg-white/5 rounded animate-pulse delay-150" />
+                  <div className="pt-6 flex justify-between">
+                    <div className="h-10 w-24 bg-white/5 rounded-lg" />
+                    <div className="h-10 w-28 bg-[var(--primary)]/20 border border-[var(--primary)]/30 rounded-lg" />
+                  </div>
+                </div>
+                <div className="absolute -top-4 -right-4 glass-card p-4 border-emerald-500/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
+                    <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest">100% Compliant</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
