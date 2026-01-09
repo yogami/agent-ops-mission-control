@@ -3,10 +3,10 @@ import { getSupabaseServerClient } from '@/infrastructure/supabase/server';
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const supabase = getSupabaseServerClient();
 
@@ -34,10 +34,10 @@ export async function PATCH(
 
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const supabase = getSupabaseServerClient();
 
         const { error } = await supabase
