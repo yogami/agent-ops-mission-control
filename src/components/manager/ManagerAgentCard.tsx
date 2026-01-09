@@ -19,6 +19,7 @@ export default function ManagerAgentCard({ agent, draggable, onDragStart, onClic
 
     return (
         <div
+            data-testid="agent-card"
             draggable={draggable}
             onDragStart={onDragStart}
             onClick={onClick}

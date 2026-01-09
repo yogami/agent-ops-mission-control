@@ -17,9 +17,9 @@ test.describe('Enterprise Discovery Platform - Management Flow', () => {
         await expect(page.locator('h1')).toContainText('Management');
 
         // Dashboard summary cards
-        await expect(page.getByText('Running Agents')).toBeVisible();
-        await expect(page.getByText('Avg Trust Score')).toBeVisible();
-        await expect(page.getByText('Completed Tasks')).toBeVisible();
+        await expect(page.getByText('Active Agents')).toBeVisible();
+        await expect(page.getByText('Fleet Trust')).toBeVisible();
+        await expect(page.getByText('Human Review')).toBeVisible();
     });
 
     test('should display Kanban board and columns', async ({ page }) => {
@@ -27,8 +27,8 @@ test.describe('Enterprise Discovery Platform - Management Flow', () => {
 
         // Columns
         await expect(page.locator('h3', { hasText: 'Scheduled' })).toBeVisible();
-        await expect(page.locator('h3', { hasText: 'Running' })).toBeVisible();
-        await expect(page.locator('h3', { hasText: 'Review' })).toBeVisible();
+        await expect(page.locator('h3', { hasText: 'Active' })).toBeVisible();
+        await expect(page.locator('h3', { hasText: 'In Review' })).toBeVisible();
         await expect(page.locator('h3', { hasText: 'Completed' })).toBeVisible();
     });
 
@@ -47,7 +47,7 @@ test.describe('Enterprise Discovery Platform - Management Flow', () => {
         await expect(firstCard).toBeVisible();
 
         // Check for details like DID or Deadline
-        await expect(firstCard.locator('p').filter({ hasText: 'DID:' })).toBeVisible();
+        await expect(firstCard.getByText('DID:')).toBeVisible();
     });
 
     test('should navigate back to mission control', async ({ page }) => {

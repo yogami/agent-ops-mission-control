@@ -17,10 +17,11 @@ export default function KanbanBoard({ agents, onStatusChange }: KanbanBoardProps
     ];
 
     return (
-        <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
+        <div data-testid="kanban-board" className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
             {columns.map((column) => (
                 <KanbanColumn
                     key={column.status}
+                    data-testid={`kanban-column-${column.status}`}
                     title={column.title}
                     status={column.status}
                     color={column.color}

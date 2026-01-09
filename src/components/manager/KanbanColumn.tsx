@@ -25,6 +25,7 @@ export default function KanbanColumn({ title, agents, status, color, onDrop }: K
 
     return (
         <div
+            data-testid="kanban-column"
             className="flex-1 min-w-[300px] flex flex-col h-full"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
