@@ -10,9 +10,36 @@ export type AgentCategory = 'compliance' | 'governance' | 'content' | 'utility';
 export type ExecutionStatus = 'scheduled' | 'running' | 'review' | 'completed' | 'stopped';
 
 export interface ComplianceBadge {
-    type: 'AI_ACT' | 'GDPR' | 'DIGA' | 'SOC2' | 'ISO27001';
+    type: 'AI_ACT' | 'GDPR' | 'DIGA' | 'SOC2' | 'ISO27001' | 'DATA_RESIDENCY_EU';
     verified: boolean;
     proofUrl?: string;
+}
+
+// Enterprise: Anomaly Detection
+export type AnomalyType = 'drift' | 'policy_violation' | 'performance' | 'pii_leak';
+export type AnomalySeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export interface Anomaly {
+    id: string;
+    type: AnomalyType;
+    severity: AnomalySeverity;
+    message: string;
+    detectedAt: string;
+    resolved?: boolean;
+}
+
+// Enterprise: Human-in-Loop
+export type ActionStatus = 'pending' | 'approved' | 'denied';
+
+export interface PendingAction {
+    id: string;
+    action: string;
+    description: string;
+    payload?: unknown;
+    requestedAt: string;
+    status: ActionStatus;
+    reviewedBy?: string;
+    reviewedAt?: string;
 }
 
 export interface Agent {
@@ -37,6 +64,17 @@ export interface Agent {
     lastActionAt?: string | null;
     createdAt?: string;
     updatedAt?: string;
+
+    // Enterprise: Kill Switch
+    isEmergencyStopped?: boolean;
+    stoppedAt?: string;
+    stoppedBy?: string;
+
+    // Enterprise: Anomaly Detection
+    anomalies?: Anomaly[];
+
+    // Enterprise: Human-in-Loop
+    pendingActions?: PendingAction[];
 }
 
 /**

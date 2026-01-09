@@ -19,6 +19,7 @@ export const SEED_AGENTS: Agent[] = [
             { type: 'AI_ACT', verified: true },
             { type: 'GDPR', verified: true },
             { type: 'DIGA', verified: true },
+            { type: 'DATA_RESIDENCY_EU', verified: true },
         ],
         endpointUrl: 'https://convo-guard-ai-production.up.railway.app',
         tags: ['compliance', 'safety', 'mental-health', 'gdpr', 'ai-act'],
@@ -35,6 +36,7 @@ export const SEED_AGENTS: Agent[] = [
         badges: [
             { type: 'SOC2', verified: true },
             { type: 'GDPR', verified: true },
+            { type: 'DATA_RESIDENCY_EU', verified: true },
         ],
         endpointUrl: 'https://agent-trust-verifier-production.up.railway.app',
         tags: ['governance', 'trust', 'zk-proofs', 'identity'],

@@ -31,7 +31,7 @@ export default function DashboardSummary({ agents, onNewAgent }: DashboardSummar
             {/* Stats Cards */}
             <div className="glass-card p-6">
                 <div className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-1">Active Agents</div>
-                <div className="text-4xl font-bold text-white flex items-baseline gap-2">
+                <div data-testid="active-count" className="text-4xl font-bold text-white flex items-baseline gap-2">
                     {activeCount}
                     <span className="status-pulse status-online" />
                 </div>
@@ -40,7 +40,7 @@ export default function DashboardSummary({ agents, onNewAgent }: DashboardSummar
 
             <div className="glass-card p-6">
                 <div className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-1">Human Review</div>
-                <div className="text-4xl font-bold text-white flex items-baseline gap-2">
+                <div data-testid="review-count" className="text-4xl font-bold text-white flex items-baseline gap-2">
                     {reviewCount}
                     {reviewCount > 0 && <span className="status-pulse status-warning" />}
                 </div>
@@ -49,7 +49,7 @@ export default function DashboardSummary({ agents, onNewAgent }: DashboardSummar
 
             <div className="glass-card p-6">
                 <div className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-1">Fleet Trust</div>
-                <div className="text-4xl font-bold text-white">
+                <div data-testid="avg-trust" className="text-4xl font-bold text-white">
                     {avgTrust}%
                 </div>
                 <div className="text-emerald-500 text-xs mt-2">Verified compliance level</div>

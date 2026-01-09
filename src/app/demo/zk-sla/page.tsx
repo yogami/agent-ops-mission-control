@@ -64,7 +64,7 @@ export default function ZKSlaDemoPage() {
                                 {step >= 1 && <span className="text-[var(--primary)] text-sm font-mono">PROVED</span>}
                             </div>
                             <p className="text-sm text-gray-400">
-                                Agent generates proof of "Task Latency &lt; 100ms" using local trace data.
+                                Agent generates proof of &quot;Task Latency &lt; 100ms&quot; using local trace data.
                             </p>
                         </div>
 

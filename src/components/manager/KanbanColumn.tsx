@@ -1,17 +1,17 @@
 'use client';
 
-import { Agent, ExecutionStatus } from '@/domain/Agent';
+import { Agent } from '@/domain/Agent';
 import ManagerAgentCard from './ManagerAgentCard';
 
 interface KanbanColumnProps {
     title: string;
-    status: ExecutionStatus;
     color: string;
     agents: Agent[];
     onDrop: (agentId: string) => void;
+    'data-testid'?: string;
 }
 
-export default function KanbanColumn({ title, agents, status, color, onDrop }: KanbanColumnProps) {
+export default function KanbanColumn({ title, agents, color, onDrop, 'data-testid': testId }: KanbanColumnProps) {
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault();
     };
@@ -25,7 +25,7 @@ export default function KanbanColumn({ title, agents, status, color, onDrop }: K
 
     return (
         <div
-            data-testid="kanban-column"
+            data-testid={testId || "kanban-column"}
             className="flex-1 min-w-[300px] flex flex-col h-full"
             onDragOver={handleDragOver}
             onDrop={handleDrop}

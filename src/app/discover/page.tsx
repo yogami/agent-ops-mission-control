@@ -2,13 +2,15 @@
  * Discovery Page
  * 
  * Natural language search for agent discovery with live results.
+ * Includes EU compliance filters for GDPR, AI Act, DiGA, and Data Residency.
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { FleetGrid } from '@/components/FleetGrid';
+import { ComplianceFilter, ComplianceFilterType } from '@/components/ComplianceFilter';
 import { SEED_AGENTS } from '@/infrastructure/seedAgents';
 import { Agent } from '@/domain/Agent';
 import Link from 'next/link';
@@ -18,6 +20,33 @@ export default function DiscoverPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [lastQuery, setLastQuery] = useState('');
+    const [activeFilters, setActiveFilters] = useState<ComplianceFilterType[]>([]);
+
+    const filterAgents = useCallback((agents: Agent[], query: string, filters: ComplianceFilterType[]) => {
+        let filtered = agents;
+
+        // Text search
+        if (query) {
+            const queryLower = query.toLowerCase();
+            filtered = filtered.filter(agent =>
+                agent.name.toLowerCase().includes(queryLower) ||
+                agent.description.toLowerCase().includes(queryLower) ||
+                agent.tags.some(tag => tag.toLowerCase().includes(queryLower)) ||
+                agent.badges.some(b => b.type.toLowerCase().includes(queryLower.replace('-', '_')))
+            );
+        }
+
+        // Compliance filters (must have ALL selected badges)
+        if (filters.length > 0) {
+            filtered = filtered.filter(agent =>
+                filters.every(filter =>
+                    agent.badges.some(b => b.type === filter && b.verified)
+                )
+            );
+        }
+
+        return filtered;
+    }, []);
 
     const handleSearch = async (query: string) => {
         setIsLoading(true);
@@ -27,17 +56,18 @@ export default function DiscoverPage() {
         // Simulate API delay for demo effect
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Local filtering for demo (in production, call Capability Broker API)
-        const queryLower = query.toLowerCase();
-        const filtered = SEED_AGENTS.filter(agent =>
-            agent.name.toLowerCase().includes(queryLower) ||
-            agent.description.toLowerCase().includes(queryLower) ||
-            agent.tags.some(tag => tag.toLowerCase().includes(queryLower)) ||
-            agent.badges.some(b => b.type.toLowerCase().includes(queryLower.replace('-', '_')))
-        );
-
+        const filtered = filterAgents(SEED_AGENTS, query, activeFilters);
         setResults(filtered);
         setIsLoading(false);
+    };
+
+    const handleFilterChange = (filters: ComplianceFilterType[]) => {
+        setActiveFilters(filters);
+        // Re-apply filters with current query
+        if (hasSearched) {
+            const filtered = filterAgents(SEED_AGENTS, lastQuery, filters);
+            setResults(filtered);
+        }
     };
 
     return (
@@ -58,8 +88,13 @@ export default function DiscoverPage() {
                 </div>
 
                 {/* Search */}
-                <div className="mb-12">
+                <div className="mb-6">
                     <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+                </div>
+
+                {/* EU Compliance Filters */}
+                <div className="mb-8">
+                    <ComplianceFilter onFilterChange={handleFilterChange} />
                 </div>
 
                 {/* Results */}
@@ -84,7 +119,7 @@ export default function DiscoverPage() {
                         // Results found
                         <div>
                             <h2 className="text-xl font-semibold text-white mb-6">
-                                Found {results.length} agent{results.length !== 1 ? 's' : ''} for "{lastQuery}"
+                                Found {results.length} agent{results.length !== 1 ? 's' : ''} for &quot;{lastQuery}&quot;
                             </h2>
                             <FleetGrid agents={results} />
                         </div>
@@ -93,7 +128,7 @@ export default function DiscoverPage() {
                         <div className="text-center py-20">
                             <div className="text-6xl mb-4">🔍</div>
                             <h2 className="text-xl font-semibold text-white mb-2">
-                                No agents found for "{lastQuery}"
+                                No agents found for &quot;{lastQuery}&quot;
                             </h2>
                             <p className="text-gray-400 mb-6">
                                 Try a different search term or browse all available agents.
@@ -111,14 +146,14 @@ export default function DiscoverPage() {
                     )}
                 </div>
 
-                {/* Compliance Legend */}
                 <div className="mt-16 p-6 glass-card">
                     <h3 className="text-lg font-semibold text-white mb-4">Compliance Badges</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                         {[
                             { type: 'AI_ACT', label: 'EU AI Act', desc: 'Compliant with Regulation 2024/1689' },
                             { type: 'GDPR', label: 'GDPR', desc: 'Data protection verified' },
                             { type: 'DIGA', label: 'DiGA', desc: 'German digital health approved' },
+                            { type: 'DATA_RESIDENCY_EU', label: 'EU Data Residency', desc: 'Data stored within EU' },
                             { type: 'SOC2', label: 'SOC2', desc: 'Security controls audited' },
                             { type: 'ISO27001', label: 'ISO27001', desc: 'Information security certified' },
                         ].map((badge) => (
@@ -130,6 +165,17 @@ export default function DiscoverPage() {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                {/* Submit Agent CTA */}
+                <div className="mt-8 p-6 glass-card text-center">
+                    <h3 className="text-lg font-semibold text-white mb-2">Have an AI Agent to Register?</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                        Submit your agent for vetting and join the EU Compliance Agent Registry.
+                    </p>
+                    <Link href="/submit" className="btn-primary" data-testid="submit-agent-cta">
+                        Submit Your Agent →
+                    </Link>
                 </div>
             </div>
         </main>

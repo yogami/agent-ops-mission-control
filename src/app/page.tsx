@@ -4,11 +4,17 @@
  * "Mission Control" hero + Fleet Overview
  */
 
+'use client';
+
+import { useState } from 'react';
 import { SEED_AGENTS } from '@/infrastructure/seedAgents';
 import { FleetGrid } from '@/components/FleetGrid';
+import { EnterpriseTrialModal } from '@/components/enterprise';
 import Link from 'next/link';
 
 export default function HomePage() {
+  const [showTrialModal, setShowTrialModal] = useState(false);
+
   // Use seed data for demo; in production, fetch from Capability Broker
   const agents = SEED_AGENTS;
   const onlineCount = agents.filter(a => a.status === 'online').length;
@@ -32,16 +38,16 @@ export default function HomePage() {
 
           {/* Main Title */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="gradient-text">Agent Governance</span>
+            <span className="gradient-text">EU Compliance</span>
             <br />
-            <span className="text-white">Platform</span>
+            <span className="text-white">Agent Registry</span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-            Vendor-neutral compliance infrastructure for enterprise AI.
+            Platform-agnostic governance layer for AI agents on AWS Bedrock, Azure OpenAI, Google Vertex, and more.
             <br />
-            <span className="text-[var(--primary)]">Runtime enforcement. ZK-Privacy. EU-Ready.</span>
+            <span className="text-[var(--primary)]">Runtime Enforcement. ZK-Privacy. EU AI Act Ready.</span>
           </p>
 
           {/* Stats Row */}
@@ -59,16 +65,34 @@ export default function HomePage() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex justify-center gap-4">
-            <Link href="/discover" className="btn-primary">
-              Discover Agents
+          <div className="flex flex-wrap justify-center gap-4 mb-6">
+            <button
+              onClick={() => setShowTrialModal(true)}
+              className="btn-primary text-lg px-8 py-4"
+              data-testid="enterprise-trial-btn"
+            >
+              🚀 Start Enterprise Trial
+            </button>
+            <Link href="/discover/scan" className="btn-secondary text-lg px-8 py-4" data-testid="scan-agents-btn">
+              🔍 Scan My Agents
             </Link>
-            <Link href="/demo/zk-sla" className="btn-secondary">
-              Interactive Demo
+          </div>
+          <div className="flex justify-center gap-4">
+            <Link href="/discover" className="text-sm text-gray-400 hover:text-[var(--primary)]">
+              Browse Registry →
+            </Link>
+            <Link href="/demo/zk-sla" className="text-sm text-gray-400 hover:text-[var(--primary)]">
+              ZK-SLA Demo →
+            </Link>
+            <Link href="/manage" className="text-sm text-gray-400 hover:text-[var(--primary)]">
+              Fleet Management →
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Enterprise Trial Modal */}
+      <EnterpriseTrialModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} />
 
       {/* Regulated Industries Focus */}
       <section className="py-24 px-6 border-t border-[var(--border)] bg-[var(--surface-1)]">
@@ -124,7 +148,7 @@ export default function HomePage() {
       <section className="py-16 px-6 border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-12 text-white">
-            AWS builds agents. We <span className="gradient-text">govern</span> them.
+            AWS builds agents. <span className="gradient-text">We govern them</span> — with EU compliance.
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -190,7 +214,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="py-8 px-6 border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <div>© 2026 Berlin AI Labs. EU-First AI Infrastructure.</div>
+          <div>© 2026 Berlin AI Labs. EU Compliance Agent Registry.</div>
           <div className="flex gap-6">
             <a href="https://berlinailabs.de" className="hover:text-[var(--primary)]">Website</a>
             <a href="https://github.com/yogami" className="hover:text-[var(--primary)]">GitHub</a>

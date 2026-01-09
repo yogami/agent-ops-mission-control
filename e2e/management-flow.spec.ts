@@ -53,6 +53,6 @@ test.describe('Enterprise Discovery Platform - Management Flow', () => {
     test('should navigate back to mission control', async ({ page }) => {
         await page.getByRole('link', { name: 'Back to Mission Control' }).click();
         await page.waitForURL('/');
-        await expect(page.locator('h1')).toContainText('Agent Governance');
+        await expect(page.locator('h1')).toContainText('EU Compliance');
     });
 });

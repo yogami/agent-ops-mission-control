@@ -23,7 +23,6 @@ export default function KanbanBoard({ agents, onStatusChange }: KanbanBoardProps
                     key={column.status}
                     data-testid={`kanban-column-${column.status}`}
                     title={column.title}
-                    status={column.status}
                     color={column.color}
                     agents={agents.filter((a) => a.executionStatus === column.status)}
                     onDrop={(agentId) => onStatusChange(agentId, column.status)}

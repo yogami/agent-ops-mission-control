@@ -11,8 +11,8 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
         await page.goto('/');
 
         // Hero section
-        await expect(page.locator('h1')).toContainText('Agent Governance');
-        await expect(page.locator('h1')).toContainText('Platform');
+        await expect(page.locator('h1')).toContainText('EU Compliance');
+        await expect(page.locator('h1')).toContainText('Agent Registry');
 
         // Stats visible - use exact match
         await expect(page.getByText('Services', { exact: true })).toBeVisible();
@@ -38,7 +38,7 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
     test('should navigate to discover page', async ({ page }) => {
         await page.goto('/');
 
-        await page.getByRole('link', { name: 'Discover Agents' }).click();
+        await page.getByRole('link', { name: 'Browse Registry →' }).click();
         await page.waitForURL('/discover');
 
         await expect(page.locator('h1')).toContainText('Discover');
