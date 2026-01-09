@@ -46,8 +46,8 @@ test.describe('Enterprise Discovery Platform - Management Flow', () => {
         const firstCard = page.getByTestId('agent-card').first();
         await expect(firstCard).toBeVisible();
 
-        // Check for details like DID or Deadline
-        await expect(firstCard.getByText('DID:')).toBeVisible();
+        // Check for trust score visibility
+        await expect(firstCard.getByText('%')).toBeVisible();
     });
 
     test('should navigate back to mission control', async ({ page }) => {
