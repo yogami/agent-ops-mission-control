@@ -43,19 +43,21 @@ export interface Agent {
  * Factory function to create an Agent entity
  */
 export function createAgent(params: Partial<Agent> & { name: string }): Agent {
+    const { id, name, ...rest } = params;
+
     return {
-        id: params.id || Math.random().toString(36).substring(7),
-        name: params.name,
-        description: params.description || '',
-        category: params.category || 'utility',
-        status: params.status || 'online',
-        executionStatus: params.executionStatus || 'scheduled',
-        trustScore: params.trustScore || 0,
-        badges: params.badges || [],
-        endpointUrl: params.endpointUrl || '',
-        tags: params.tags || [],
+        description: '',
+        category: 'utility',
+        status: 'online',
+        executionStatus: 'scheduled',
+        trustScore: 0,
+        badges: [],
+        endpointUrl: '',
+        tags: [],
         lastHealthCheck: new Date(),
-        ...params,
+        ...rest,
+        id: id || Math.random().toString(36).substring(7),
+        name: name,
     };
 }
 
