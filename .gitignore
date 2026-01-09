@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Agent Context Injections
+.agent_rules.md
+.agent_catalog.md

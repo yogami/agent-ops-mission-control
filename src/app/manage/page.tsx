@@ -148,7 +148,8 @@ export default function ManagePage() {
         }
     };
 
-    const activeAgentCount = agents.filter(a => !a.isEmergencyStopped && a.status === 'online').length;
+    const agentsArray = Array.isArray(agents) ? agents : [];
+    const activeAgentCount = agentsArray.filter(a => !a.isEmergencyStopped && a.status === 'online').length;
 
     return (
         <main className="min-h-screen py-12 px-6">

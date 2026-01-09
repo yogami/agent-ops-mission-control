@@ -222,7 +222,14 @@ export default function ShadowDiscoveryPage() {
                     <div className="glass-card p-8">
                         <div className="flex items-center justify-between mb-6">
                             <div>
-                                <h2 className="text-xl font-semibold text-white">Discovered Agents</h2>
+                                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                                    Discovered Agents
+                                    {isMockData && (
+                                        <span className="text-[10px] px-2 py-0.5 bg-amber-500/20 text-amber-500 border border-amber-500/30 rounded uppercase tracking-wider font-bold">
+                                            Demo Data
+                                        </span>
+                                    )}
+                                </h2>
                                 <p className="text-gray-400 text-sm">
                                     Found {discovered.length} unmanaged agent{discovered.length !== 1 ? 's' : ''}
                                 </p>

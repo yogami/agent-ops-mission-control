@@ -53,4 +53,30 @@ describe('TrustVerifierClient', () => {
         expect(await client.verifyZkProof('zk://proof123')).toBe(true);
         expect(await client.verifyZkProof('https://invalid.com')).toBe(false);
     });
+
+    it('should fetch anomalies and map them', async () => {
+        const mockAnomalies = [
+            { id: '1', type: 'drift', severity: 'critical', message: 'Test', detected_at: '2026-01-01T00:00:00Z', resolved: false }
+        ];
+
+        vi.mocked(fetch).mockResolvedValueOnce({
+            ok: true,
+            json: async () => mockAnomalies,
+        } as unknown as Response);
+
+        const result = await client.getAnomalies();
+        expect(result).toHaveLength(1);
+        expect(result[0].id).toBe('1');
+        expect(result[0].detectedAt).toBe('2026-01-01T00:00:00Z');
+    });
+
+    it('should return mock anomalies on failure', async () => {
+        vi.mocked(fetch).mockResolvedValueOnce({
+            ok: false,
+        } as unknown as Response);
+
+        const result = await client.getAnomalies();
+        expect(result.length).toBeGreaterThan(0);
+        expect(result[0].id).toBe('a1');
+    });
 });
