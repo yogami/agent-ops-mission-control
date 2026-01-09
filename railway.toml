@@ -9,3 +9,4 @@ healthcheckTimeout = 300
 
 [variables]
 NODE_ENV = "production"
+NIXPACKS_NODE_VERSION = "20"
