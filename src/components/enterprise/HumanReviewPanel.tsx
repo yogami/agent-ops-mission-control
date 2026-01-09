@@ -109,7 +109,7 @@ export function HumanReviewPanel({ pendingActions, onApprove, onDeny }: HumanRev
 
                                         <p className="text-xs text-gray-400 mb-3">{action.description}</p>
 
-                                        {action.payload && (
+                                        {!!action.payload && (
                                             <pre className="p-2 bg-black/30 rounded text-xs font-mono text-gray-400 mb-3 overflow-x-auto whitespace-pre-wrap">
                                                 {JSON.stringify(action.payload, null, 2)}
                                             </pre>
