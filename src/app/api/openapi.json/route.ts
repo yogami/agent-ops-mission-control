@@ -92,6 +92,44 @@ const openApiSpec = {
                 },
             },
         },
+        '/api/manager/agents': {
+            get: {
+                summary: 'List managed agents',
+                description: 'Returns all agents managed by the current user from the am_agents table',
+                operationId: 'listManagedAgents',
+                responses: {
+                    '200': {
+                        description: 'Successful response',
+                        content: {
+                            'application/json': {
+                                schema: {
+                                    type: 'array',
+                                    items: { $ref: '#/components/schemas/Agent' },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            post: {
+                summary: 'Register new agent',
+                description: 'Creates a new agent in the am_agents table',
+                operationId: 'createAgent',
+                requestBody: {
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: { $ref: '#/components/schemas/Agent' },
+                        },
+                    },
+                },
+                responses: {
+                    '201': {
+                        description: 'Agent created',
+                    },
+                },
+            },
+        },
     },
     components: {
         schemas: {
