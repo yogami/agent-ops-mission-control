@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Agent } from '@/domain/Agent';
 
 type CloudProvider = 'aws' | 'azure' | 'openai' | 'gcp';
 type ScanStep = 'select' | 'credentials' | 'scanning' | 'results';
@@ -15,16 +14,8 @@ interface DiscoveredAgent {
     region: string;
     lastActive: string;
     isManaged: boolean;
+    modelId?: string;
 }
-
-// Mock discovered agents for demo
-const MOCK_DISCOVERED: DiscoveredAgent[] = [
-    { id: 'd1', name: 'bedrock-claude-3', provider: 'aws', type: 'Foundation Model', region: 'us-east-1', lastActive: '2 hours ago', isManaged: false },
-    { id: 'd2', name: 'assistant-gpt4-prod', provider: 'azure', type: 'Azure OpenAI', region: 'westeurope', lastActive: '15 minutes ago', isManaged: false },
-    { id: 'd3', name: 'langchain-agent-v2', provider: 'aws', type: 'Lambda Agent', region: 'eu-west-1', lastActive: '1 day ago', isManaged: false },
-    { id: 'd4', name: 'customer-support-bot', provider: 'openai', type: 'GPT-4 Turbo', region: 'global', lastActive: '5 minutes ago', isManaged: false },
-    { id: 'd5', name: 'internal-classifier', provider: 'gcp', type: 'Vertex AI', region: 'europe-west3', lastActive: '3 hours ago', isManaged: false },
-];
 
 const PROVIDER_INFO: Record<CloudProvider, { name: string; icon: string; color: string }> = {
     aws: { name: 'AWS Bedrock', icon: '🟠', color: 'border-orange-500/30' },
@@ -40,23 +31,52 @@ export default function ShadowDiscoveryPage() {
     const [scanProgress, setScanProgress] = useState(0);
     const [discovered, setDiscovered] = useState<DiscoveredAgent[]>([]);
     const [addedAgents, setAddedAgents] = useState<Set<string>>(new Set());
+    const [isMockData, setIsMockData] = useState(false);
+    const [scanError, setScanError] = useState<string | null>(null);
 
-    const startScan = () => {
+    const startScan = async () => {
         setStep('scanning');
         setScanProgress(0);
+        setScanError(null);
 
-        const interval = setInterval(() => {
-            setScanProgress(prev => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    // Filter by selected provider for demo
-                    setDiscovered(MOCK_DISCOVERED.filter(a => a.provider === selectedProvider || selectedProvider === null));
-                    setStep('results');
-                    return 100;
-                }
-                return prev + 10;
+        // Animate progress bar
+        const progressInterval = setInterval(() => {
+            setScanProgress(prev => Math.min(prev + 5, 90));
+        }, 200);
+
+        try {
+            const response = await fetch('/api/scanner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    provider: selectedProvider,
+                    credentials: credentials.key ? {
+                        accessKeyId: credentials.key,
+                        secretAccessKey: credentials.secret,
+                        apiKey: credentials.key,
+                        region: credentials.region,
+                        resourceName: credentials.region, // Azure uses this
+                    } : undefined,
+                }),
             });
-        }, 300);
+
+            clearInterval(progressInterval);
+            setScanProgress(100);
+
+            if (!response.ok) {
+                throw new Error('Scan failed');
+            }
+
+            const data = await response.json();
+            setDiscovered(data.agents || []);
+            setIsMockData(data.isMockData);
+            setStep('results');
+        } catch (error) {
+            clearInterval(progressInterval);
+            console.error('Scan error:', error);
+            setScanError('Scan failed. Please check credentials and try again.');
+            setStep('credentials');
+        }
     };
 
     const addToRegistry = (agentId: string) => {
@@ -154,9 +174,17 @@ export default function ShadowDiscoveryPage() {
 
                         <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg mt-6">
                             <p className="text-amber-400 text-sm">
-                                ⚠️ For this demo, credentials are not validated. Click "Scan" to see mock results.
+                                {credentials.key
+                                    ? '✓ Credentials will be used for live scan (not stored)'
+                                    : '⚠️ No credentials provided. Click "Scan" to use demo data.'}
                             </p>
                         </div>
+
+                        {scanError && (
+                            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg mt-4">
+                                <p className="text-red-400 text-sm">{scanError}</p>
+                            </div>
+                        )}
 
                         <div className="mt-8 flex justify-between">
                             <button onClick={() => setStep('select')} className="btn-secondary">

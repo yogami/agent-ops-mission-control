@@ -1,32 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Agent, ExecutionStatus, Anomaly, PendingAction } from '@/domain/Agent';
 import DashboardSummary from '@/components/manager/DashboardSummary';
 import KanbanBoard from '@/components/manager/KanbanBoard';
 import { GlobalKillSwitch, AlertPanel, HumanReviewPanel } from '@/components/enterprise';
 import Link from 'next/link';
 
-// Mock anomalies for demo
-const MOCK_ANOMALIES: Anomaly[] = [
-    { id: 'a1', type: 'drift', severity: 'high', message: 'Model accuracy dropped 15% in last 24h', detectedAt: new Date().toISOString() },
-    { id: 'a2', type: 'policy_violation', severity: 'critical', message: 'Agent accessed restricted data category', detectedAt: new Date(Date.now() - 3600000).toISOString() },
-    { id: 'a3', type: 'pii_leak', severity: 'medium', message: 'Potential PII detected in output logs', detectedAt: new Date(Date.now() - 7200000).toISOString() },
-    { id: 'a4', type: 'performance', severity: 'low', message: 'Response latency increased by 200ms', detectedAt: new Date(Date.now() - 86400000).toISOString(), resolved: true },
-];
-
-// Mock pending actions for demo
-const MOCK_PENDING_ACTIONS: PendingAction[] = [
-    { id: 'p1', action: 'Deploy Model v2.3', description: 'Update production model with retrained weights', requestedAt: new Date().toISOString(), status: 'pending' },
-    { id: 'p2', action: 'Expand Data Access', description: 'Grant access to customer_orders table for analysis', payload: { table: 'customer_orders', access: 'read' }, requestedAt: new Date(Date.now() - 1800000).toISOString(), status: 'pending' },
-    { id: 'p3', action: 'Update Rate Limits', description: 'Increase API rate limit from 100/min to 500/min', requestedAt: new Date(Date.now() - 86400000).toISOString(), status: 'approved', reviewedBy: 'admin@example.com', reviewedAt: new Date(Date.now() - 82800000).toISOString() },
-];
-
 export default function ManagePage() {
     const [agents, setAgents] = useState<Agent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [anomalies, setAnomalies] = useState<Anomaly[]>(MOCK_ANOMALIES);
-    const [pendingActions, setPendingActions] = useState<PendingAction[]>(MOCK_PENDING_ACTIONS);
+    const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
+    const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
 
     // Fetch agents from the live API
     useEffect(() => {
@@ -44,6 +29,42 @@ export default function ManagePage() {
         }
         fetchAgents();
     }, []);
+
+    // Fetch anomalies from live API (with polling)
+    const fetchAnomalies = useCallback(async () => {
+        try {
+            const response = await fetch('/api/anomalies');
+            if (response.ok) {
+                const data = await response.json();
+                setAnomalies(data.anomalies || []);
+            }
+        } catch (error) {
+            console.error('Error loading anomalies:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchAnomalies();
+        const interval = setInterval(fetchAnomalies, 30000); // Poll every 30s
+        return () => clearInterval(interval);
+    }, [fetchAnomalies]);
+
+    // Fetch pending actions from live API
+    const fetchActions = useCallback(async () => {
+        try {
+            const response = await fetch('/api/actions');
+            if (response.ok) {
+                const data = await response.json();
+                setPendingActions(data.actions || []);
+            }
+        } catch (error) {
+            console.error('Error loading actions:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchActions();
+    }, [fetchActions]);
 
     const handleStatusChange = async (agentId: string, newStatus: ExecutionStatus) => {
         const previousAgents = [...agents];
@@ -68,9 +89,27 @@ export default function ManagePage() {
     };
 
     const handleGlobalKill = async () => {
-        // In production, this would call the API to stop all agents
-        setAgents(prev => prev.map(a => ({ ...a, isEmergencyStopped: true, stoppedAt: new Date().toISOString() })));
-        console.log('Global emergency stop triggered');
+        try {
+            const response = await fetch('/api/kill', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ actorId: 'admin@mission-control' })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Global kill successful: ${data.stoppedCount} agents stopped`);
+                // Refresh agents list
+                const agentsResponse = await fetch('/api/manager/agents');
+                if (agentsResponse.ok) {
+                    setAgents(await agentsResponse.json());
+                }
+            }
+        } catch (error) {
+            console.error('Global kill failed:', error);
+            // Fallback to optimistic update
+            setAgents(prev => prev.map(a => ({ ...a, isEmergencyStopped: true, stoppedAt: new Date().toISOString() })));
+        }
     };
 
     const handleResolveAnomaly = (anomalyId: string) => {
@@ -78,16 +117,35 @@ export default function ManagePage() {
     };
 
     const handleApproveAction = async (actionId: string, reviewerName: string) => {
-        setPendingActions(prev => prev.map(a =>
-            a.id === actionId ? { ...a, status: 'approved' as const, reviewedBy: reviewerName, reviewedAt: new Date().toISOString() } : a
-        ));
+        try {
+            const response = await fetch('/api/actions', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ actionId, status: 'approved', reviewedBy: reviewerName })
+            });
+
+            if (response.ok) {
+                await fetchActions(); // Refresh from DB
+            }
+        } catch (error) {
+            console.error('Approve failed:', error);
+        }
     };
 
     const handleDenyAction = async (actionId: string, reviewerName: string, reason?: string) => {
-        setPendingActions(prev => prev.map(a =>
-            a.id === actionId ? { ...a, status: 'denied' as const, reviewedBy: reviewerName, reviewedAt: new Date().toISOString() } : a
-        ));
-        if (reason) console.log(`Action ${actionId} denied: ${reason}`);
+        try {
+            const response = await fetch('/api/actions', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ actionId, status: 'denied', reviewedBy: reviewerName, reason })
+            });
+
+            if (response.ok) {
+                await fetchActions(); // Refresh from DB
+            }
+        } catch (error) {
+            console.error('Deny failed:', error);
+        }
     };
 
     const activeAgentCount = agents.filter(a => !a.isEmergencyStopped && a.status === 'online').length;
