@@ -52,7 +52,7 @@ export function GlobalKillSwitch({ onGlobalKill, activeAgentCount }: GlobalKillS
                 <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-6" data-testid="global-kill-modal">
                     <div className="glass-card border-red-500/50 max-w-md w-full p-8 text-center">
                         <div className="text-6xl mb-4">🚨</div>
-                        <h2 className="text-2xl font-bold text-white mb-2">Global Emergency Stop</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">Fleet Emergency Stop</h2>
                         <p className="text-gray-400 mb-6">
                             This will immediately halt <span className="text-red-400 font-bold">{activeAgentCount}</span> active agents across all environments.
                         </p>
@@ -76,7 +76,7 @@ export function GlobalKillSwitch({ onGlobalKill, activeAgentCount }: GlobalKillS
                                 className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-bold"
                                 data-testid="confirm-global-kill"
                             >
-                                {isLoading ? 'Stopping All...' : countdown > 0 ? `KILL ALL (${countdown})` : 'KILL ALL AGENTS'}
+                                {isLoading ? 'Stopping Fleet...' : countdown > 0 ? `STOP FLEET (${countdown})` : 'STOP ALL AGENTS'}
                             </button>
                         </div>
                     </div>

@@ -88,7 +88,7 @@ export default function ManagePage() {
         }
     };
 
-    const handleGlobalKill = async () => {
+    const handleFleetKill = async () => {
         try {
             const response = await fetch('/api/kill', {
                 method: 'PUT',
@@ -98,7 +98,7 @@ export default function ManagePage() {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(`Global kill successful: ${data.stoppedCount} agents stopped`);
+                console.log(`Fleet stop successful: ${data.stoppedCount} agents stopped`);
                 // Refresh agents list
                 const agentsResponse = await fetch('/api/manager/agents');
                 if (agentsResponse.ok) {
@@ -106,7 +106,7 @@ export default function ManagePage() {
                 }
             }
         } catch (error) {
-            console.error('Global kill failed:', error);
+            console.error('Fleet kill failed:', error);
             // Fallback to optimistic update
             setAgents(prev => prev.map(a => ({ ...a, isEmergencyStopped: true, stoppedAt: new Date().toISOString() })));
         }
@@ -207,7 +207,7 @@ export default function ManagePage() {
             </div>
 
             {/* Global Kill Switch - Fixed Position */}
-            <GlobalKillSwitch onGlobalKill={handleGlobalKill} activeAgentCount={activeAgentCount} />
+            <GlobalKillSwitch onGlobalKill={handleFleetKill} activeAgentCount={activeAgentCount} />
         </main>
     );
 }

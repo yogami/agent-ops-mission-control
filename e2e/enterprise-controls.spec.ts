@@ -15,7 +15,7 @@ test.describe('Enterprise Controls - Kill Switch', () => {
         await page.goto('/manage');
         await page.getByTestId('global-kill-switch').click();
         await expect(page.getByTestId('global-kill-modal')).toBeVisible();
-        await expect(page.getByText('Global Emergency Stop')).toBeVisible();
+        await expect(page.getByText('Fleet Emergency Stop')).toBeVisible();
     });
 
     test('should display alert panel trigger with anomaly count', async ({ page }) => {
