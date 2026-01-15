@@ -1,7 +1,7 @@
 /**
- * Discovery Page
+ * Discovery Page (Agent Marketplace)
  * 
- * Natural language search for agent discovery with live results.
+ * Browse verified agents from EU-compliant vendors.
  * Includes EU compliance filters for GDPR, AI Act, DiGA, and Data Residency.
  */
 
@@ -11,9 +11,12 @@ import { useState, useCallback } from 'react';
 import { SearchBar } from '@/components/SearchBar';
 import { FleetGrid } from '@/components/FleetGrid';
 import { ComplianceFilter, ComplianceFilterType } from '@/components/ComplianceFilter';
-import { SEED_AGENTS } from '@/infrastructure/seedAgents';
+import { BERLIN_AI_LABS_AGENTS } from '@/infrastructure/companyAgents';
 import { Agent } from '@/domain/Agent';
 import Link from 'next/link';
+
+// Marketplace shows Berlin AI Labs' agents (the infrastructure offerings)
+const MARKETPLACE_AGENTS = BERLIN_AI_LABS_AGENTS;
 
 export default function DiscoverPage() {
     const [results, setResults] = useState<Agent[]>([]);
@@ -56,7 +59,7 @@ export default function DiscoverPage() {
         // Simulate API delay for demo effect
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        const filtered = filterAgents(SEED_AGENTS, query, activeFilters);
+        const filtered = filterAgents(MARKETPLACE_AGENTS, query, activeFilters);
         setResults(filtered);
         setIsLoading(false);
     };
@@ -65,7 +68,7 @@ export default function DiscoverPage() {
         setActiveFilters(filters);
         // Re-apply filters with current query
         if (hasSearched) {
-            const filtered = filterAgents(SEED_AGENTS, lastQuery, filters);
+            const filtered = filterAgents(MARKETPLACE_AGENTS, lastQuery, filters);
             setResults(filtered);
         }
     };
@@ -102,9 +105,9 @@ export default function DiscoverPage() {
                         // Initial state - show all agents
                         <div>
                             <h2 className="text-xl font-semibold text-white mb-6">
-                                All Available Agents ({SEED_AGENTS.length})
+                                All Available Agents ({MARKETPLACE_AGENTS.length})
                             </h2>
-                            <FleetGrid agents={SEED_AGENTS} />
+                            <FleetGrid agents={MARKETPLACE_AGENTS} />
                         </div>
                     ) : isLoading ? (
                         // Loading state

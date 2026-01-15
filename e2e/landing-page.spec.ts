@@ -14,6 +14,9 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
         await expect(page.locator('h1')).toContainText('EU Compliance');
         await expect(page.locator('h1')).toContainText('Agent Registry');
 
+        // Company context switcher visible
+        await expect(page.getByText('Viewing as:')).toBeVisible();
+
         // Stats visible - use exact match
         await expect(page.getByText('Your Services', { exact: true })).toBeVisible();
         await expect(page.getByText('Avg Trust', { exact: true })).toBeVisible();
@@ -22,9 +25,9 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
         await expect(page.getByTestId('fleet-grid')).toBeVisible();
         await expect(page.getByTestId('agent-card').first()).toBeVisible();
 
-        // At least 5 agents displayed
+        // Default is ReguTech with 4 agents
         const agentCards = page.getByTestId('agent-card');
-        await expect(agentCards).toHaveCount(8);
+        await expect(agentCards).toHaveCount(4);
     });
 
     test('should display differentiators section', async ({ page }) => {

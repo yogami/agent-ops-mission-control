@@ -7,18 +7,19 @@
 'use client';
 
 import { useState } from 'react';
-import { SEED_AGENTS } from '@/infrastructure/seedAgents';
+import { DEMO_COMPANIES, getAgentsByCompany, REGUTECH_AGENTS } from '@/infrastructure/companyAgents';
 import { FleetGrid } from '@/components/FleetGrid';
 import { EnterpriseTrialModal } from '@/components/enterprise';
 import Link from 'next/link';
 
 export default function HomePage() {
   const [showTrialModal, setShowTrialModal] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(DEMO_COMPANIES[0]); // ReguTech by default
 
-  // Use seed data for demo; in production, fetch from Capability Broker
-  const agents = SEED_AGENTS;
+  // Get agents for the selected company
+  const agents = getAgentsByCompany(selectedCompany.id);
   const onlineCount = agents.filter(a => a.status === 'online').length;
-  const avgTrustScore = Math.round(agents.reduce((sum, a) => sum + a.trustScore, 0) / agents.length);
+  const avgTrustScore = agents.length > 0 ? Math.round(agents.reduce((sum, a) => sum + a.trustScore, 0) / agents.length) : 0;
 
   return (
     <main className="min-h-screen">
@@ -28,12 +29,27 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--secondary)]/5" />
 
         <div className="relative max-w-7xl mx-auto text-center">
-          {/* Company Context Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-[var(--border)] bg-[var(--surface-1)]">
+          {/* Company Context Badge with Switcher */}
+          <div className="inline-flex items-center gap-3 px-4 py-2 mb-8 rounded-full border border-[var(--border)] bg-[var(--surface-1)]">
             <span className="status-pulse status-online" />
             <span className="text-sm text-gray-400">
-              Viewing as: <span className="text-[var(--primary)] font-medium">Berlin AI Labs</span> • {onlineCount} services operational
+              Viewing as:
             </span>
+            <select
+              className="bg-transparent text-[var(--primary)] font-medium text-sm outline-none cursor-pointer"
+              value={selectedCompany.id}
+              onChange={(e) => {
+                const company = DEMO_COMPANIES.find(c => c.id === e.target.value);
+                if (company) setSelectedCompany(company);
+              }}
+            >
+              {DEMO_COMPANIES.map(c => (
+                <option key={c.id} value={c.id} className="bg-[var(--surface-1)] text-white">
+                  {c.name} {c.isInternal ? '(Internal)' : ''}
+                </option>
+              ))}
+            </select>
+            <span className="text-sm text-gray-500">• {onlineCount} agents operational</span>
           </div>
 
           {/* Main Title */}
@@ -184,15 +200,31 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-white">Your Fleet</h2>
-              <p className="text-sm text-gray-500">Agents registered under Berlin AI Labs</p>
+              <h2 className="text-2xl font-bold text-white">
+                {selectedCompany.isInternal ? 'Platform Infrastructure' : 'Your Fleet'}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {selectedCompany.isInternal
+                  ? 'Microservices powering Agent Ops Mission Control'
+                  : `Agents registered under ${selectedCompany.name}`
+                }
+              </p>
             </div>
-            <Link href="/discover" className="text-sm text-[var(--primary)] hover:underline">
-              Browse Marketplace →
+            <Link href="/manage" className="text-sm text-[var(--primary)] hover:underline">
+              Open Fleet Manager →
             </Link>
           </div>
 
           <FleetGrid agents={agents} />
+
+          {selectedCompany.isInternal && (
+            <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+              <p className="text-amber-400 text-sm">
+                ⚠️ <strong>Internal View:</strong> You are viewing Berlin AI Labs' infrastructure.
+                Switch to a customer context (ReguTech, Delta Campus) to see the customer experience.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -28,8 +28,8 @@ test.describe('Enterprise Discovery Platform - Discovery Flow', () => {
     test('should show all agents initially', async ({ page }) => {
         await page.goto('/discover');
 
-        // All agents visible before search
-        await expect(page.getByTestId('agent-card')).toHaveCount(8);
+        // All marketplace agents visible before search (Berlin AI Labs has 6 microservices)
+        await expect(page.getByTestId('agent-card')).toHaveCount(6);
     });
 
     test('should handle no results gracefully', async ({ page }) => {

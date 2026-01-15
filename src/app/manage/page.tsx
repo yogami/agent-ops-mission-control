@@ -5,31 +5,36 @@ import { Agent, ExecutionStatus, Anomaly, PendingAction } from '@/domain/Agent';
 import DashboardSummary from '@/components/manager/DashboardSummary';
 import KanbanBoard from '@/components/manager/KanbanBoard';
 import { GlobalKillSwitch, AlertPanel, HumanReviewPanel } from '@/components/enterprise';
+import { DEMO_COMPANIES, getAgentsByCompany } from '@/infrastructure/companyAgents';
 import Link from 'next/link';
 
-const DEMO_COMPANIES = [
-    { id: 'berlin-ai-labs', name: 'Berlin AI Labs' },
-    { id: 'regutech-corp', name: 'ReguTech Corp' },
-    { id: 'delta-campus', name: 'Delta Campus' },
-];
-
 export default function ManagePage() {
-    const [selectedCompany, setSelectedCompany] = useState(DEMO_COMPANIES[0]);
+    const [selectedCompany, setSelectedCompany] = useState(DEMO_COMPANIES[0]); // ReguTech by default
     const [agents, setAgents] = useState<Agent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
     const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
 
-    // Fetch agents from the live API (company scoped)
+    // Fetch agents from the live API (company scoped), with fallback to seed data
     const fetchAgents = useCallback(async () => {
         setIsLoading(true);
         try {
             const response = await fetch(`/api/manager/agents?companyId=${selectedCompany.id}`);
             if (!response.ok) throw new Error('Failed to fetch agents');
             const data = await response.json();
-            setAgents(data);
+
+            // If no agents from API, use seed data for demo
+            if (data.length === 0) {
+                const seedAgents = getAgentsByCompany(selectedCompany.id);
+                setAgents(seedAgents);
+            } else {
+                setAgents(data);
+            }
         } catch (error) {
-            console.error('Error loading agents:', error);
+            console.error('Error loading agents, using seed data:', error);
+            // Fallback to seed data on error
+            const seedAgents = getAgentsByCompany(selectedCompany.id);
+            setAgents(seedAgents);
         } finally {
             setIsLoading(false);
         }
