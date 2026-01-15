@@ -69,7 +69,9 @@ export async function POST(request: Request) {
                 trust_score: body.trustScore || 85,
                 tags: body.tags || [],
                 endpoint_url: body.endpointUrl || '',
-                badges: body.badges || []
+                badges: body.badges || [],
+                company_id: body.companyId || 'berlin-ai-labs',
+                company_name: body.companyName || 'Berlin AI Labs'
             }])
             .select()
             .single();

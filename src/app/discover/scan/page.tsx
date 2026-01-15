@@ -79,6 +79,9 @@ export default function ShadowDiscoveryPage() {
         }
     };
 
+    // Default demo company - matches the Fleet Management default context
+    const DEMO_COMPANY = { id: 'berlin-ai-labs', name: 'Berlin AI Labs' };
+
     const addToRegistry = async (agent: DiscoveredAgent) => {
         try {
             const response = await fetch('/api/manager/agents', {
@@ -89,7 +92,9 @@ export default function ShadowDiscoveryPage() {
                     description: `Discovered from ${agent.provider} - AI Model: ${agent.modelId || agent.type}`,
                     trustScore: 85, // Default trust score for discovered agents
                     badges: [{ type: 'AI_ACT', verified: true }], // Auto-verified in discovery demo
-                    tags: ['discovered', agent.provider, agent.region]
+                    tags: ['discovered', agent.provider, agent.region],
+                    companyId: DEMO_COMPANY.id,
+                    companyName: DEMO_COMPANY.name
                 }),
             });
 
