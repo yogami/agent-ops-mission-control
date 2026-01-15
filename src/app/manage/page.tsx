@@ -15,20 +15,22 @@ export default function ManagePage() {
     const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
     const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
 
-    // Fetch agents from the live API (company scoped), with fallback to seed data
+    // Fetch agents from the live API - prioritize REAL registered agents, then supplement with seed data
     const fetchAgents = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`/api/manager/agents?companyId=${selectedCompany.id}`);
+            // First, fetch ALL registered agents (not filtered by company)
+            const response = await fetch('/api/manager/agents');
             if (!response.ok) throw new Error('Failed to fetch agents');
-            const data = await response.json();
+            const registeredAgents = await response.json();
 
-            // If no agents from API, use seed data for demo
-            if (data.length === 0) {
+            // If we have real registered agents, show them
+            if (registeredAgents.length > 0) {
+                setAgents(registeredAgents);
+            } else {
+                // No registered agents yet - show seed data for demo
                 const seedAgents = getAgentsByCompany(selectedCompany.id);
                 setAgents(seedAgents);
-            } else {
-                setAgents(data);
             }
         } catch (error) {
             console.error('Error loading agents, using seed data:', error);

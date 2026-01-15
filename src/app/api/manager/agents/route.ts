@@ -69,7 +69,9 @@ export async function POST(request: Request) {
                 trust_score: body.trustScore || 85,
                 tags: body.tags || [],
                 endpoint_url: body.endpointUrl || '',
-                badges: body.badges || []
+                badges: body.badges || [],
+                company_id: body.companyId || null,
+                company_name: body.companyName || null
             }])
             .select()
             .single();
