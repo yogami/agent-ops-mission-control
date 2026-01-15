@@ -95,7 +95,7 @@ export default function HomePage() {
           </div>
           <div className="flex justify-center gap-4">
             <Link href="/discover" className="text-sm text-gray-400 hover:text-[var(--primary)]">
-              Browse Registry →
+              Browse Marketplace →
             </Link>
             <Link href="/demo/zk-sla" className="text-sm text-gray-400 hover:text-[var(--primary)]">
               ZK-SLA Demo →
