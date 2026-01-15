@@ -58,7 +58,10 @@ export interface Agent {
 
     // Management focused fields (ported from agent-suite-website)
     userId?: string;
+    companyId?: string;
+    companyName?: string;
     did?: string | null;
+
     deadline?: string | null;
     lastAction?: string | null;
     lastActionAt?: string | null;

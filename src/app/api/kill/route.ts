@@ -33,14 +33,14 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
     try {
         const body = await request.json();
-        const { actorId } = body;
+        const { actorId, companyId } = body;
 
-        if (!actorId) {
-            return NextResponse.json({ error: 'actorId required' }, { status: 400 });
+        if (!actorId || !companyId) {
+            return NextResponse.json({ error: 'actorId and companyId required' }, { status: 400 });
         }
 
         const service = getKillService();
-        const stoppedCount = await service.executeGlobal(actorId);
+        const stoppedCount = await service.executeFleetStop(companyId, actorId);
 
         return NextResponse.json({ success: true, stoppedCount, timestamp: new Date().toISOString() });
     } catch (error) {

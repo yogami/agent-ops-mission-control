@@ -2,15 +2,21 @@ import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/infrastructure/supabase/server';
 import { Agent } from '@/domain/Agent';
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
+        const { searchParams } = new URL(request.url);
+        const companyId = searchParams.get('companyId');
+
         const supabase = getSupabaseServerClient();
 
-        // Fetch agents from Supabase
-        const { data, error } = await supabase
-            .from('am_agents')
-            .select('*')
-            .order('created_at', { ascending: false });
+        // Fetch agents from Supabase with optional company filter
+        let query = supabase.from('am_agents').select('*');
+
+        if (companyId) {
+            query = query.eq('company_id', companyId);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: false });
 
         if (error) {
             console.error('Error fetching agents:', error);
@@ -30,6 +36,8 @@ export async function GET() {
             endpointUrl: row.endpoint_url || '',
             tags: row.tags || [],
             userId: row.user_id,
+            companyId: row.company_id,
+            companyName: row.company_name || 'Berlin AI Labs', // Default for demo
             did: row.did,
             deadline: row.deadline,
             lastAction: row.last_action,

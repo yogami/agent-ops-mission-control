@@ -16,12 +16,12 @@ export class ExecuteKillSwitch {
         return agent;
     }
 
-    async executeGlobal(actorId: string): Promise<number> {
+    async executeFleetStop(companyId: string, actorId: string): Promise<number> {
         const timestamp = new Date().toISOString();
-        const agents = await this.repo.stopAllAgents(actorId, timestamp);
+        const agents = await this.repo.stopFleetAgents(companyId, actorId, timestamp);
 
-        await this.repo.logKillEvent({ agentId: null, action: 'global_stop', actorId, timestamp });
-        await this.fireWebhook({ agentId: 'ALL', action: 'stop', actorId, timestamp });
+        await this.repo.logKillEvent({ agentId: null, action: 'fleet_stop', actorId, timestamp });
+        await this.fireWebhook({ agentId: 'FLEET', companyId, action: 'stop', actorId, timestamp });
 
         return agents.length;
     }

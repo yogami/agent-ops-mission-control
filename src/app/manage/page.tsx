@@ -7,33 +7,42 @@ import KanbanBoard from '@/components/manager/KanbanBoard';
 import { GlobalKillSwitch, AlertPanel, HumanReviewPanel } from '@/components/enterprise';
 import Link from 'next/link';
 
+const DEMO_COMPANIES = [
+    { id: 'berlin-ai-labs', name: 'Berlin AI Labs' },
+    { id: 'regutech-corp', name: 'ReguTech Corp' },
+    { id: 'delta-campus', name: 'Delta Campus' },
+];
+
 export default function ManagePage() {
+    const [selectedCompany, setSelectedCompany] = useState(DEMO_COMPANIES[0]);
     const [agents, setAgents] = useState<Agent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
     const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
 
-    // Fetch agents from the live API
-    useEffect(() => {
-        async function fetchAgents() {
-            try {
-                const response = await fetch('/api/manager/agents');
-                if (!response.ok) throw new Error('Failed to fetch agents');
-                const data = await response.json();
-                setAgents(data);
-            } catch (error) {
-                console.error('Error loading agents:', error);
-            } finally {
-                setIsLoading(false);
-            }
+    // Fetch agents from the live API (company scoped)
+    const fetchAgents = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`/api/manager/agents?companyId=${selectedCompany.id}`);
+            if (!response.ok) throw new Error('Failed to fetch agents');
+            const data = await response.json();
+            setAgents(data);
+        } catch (error) {
+            console.error('Error loading agents:', error);
+        } finally {
+            setIsLoading(false);
         }
+    }, [selectedCompany.id]);
+
+    useEffect(() => {
         fetchAgents();
-    }, []);
+    }, [fetchAgents]);
 
     // Fetch anomalies from live API (with polling)
     const fetchAnomalies = useCallback(async () => {
         try {
-            const response = await fetch('/api/anomalies');
+            const response = await fetch(`/api/anomalies?companyId=${selectedCompany.id}`);
             if (response.ok) {
                 const data = await response.json();
                 setAnomalies(data.anomalies || []);
@@ -41,7 +50,7 @@ export default function ManagePage() {
         } catch (error) {
             console.error('Error loading anomalies:', error);
         }
-    }, []);
+    }, [selectedCompany.id]);
 
     useEffect(() => {
         fetchAnomalies();
@@ -52,7 +61,7 @@ export default function ManagePage() {
     // Fetch pending actions from live API
     const fetchActions = useCallback(async () => {
         try {
-            const response = await fetch('/api/actions');
+            const response = await fetch(`/api/actions?companyId=${selectedCompany.id}`);
             if (response.ok) {
                 const data = await response.json();
                 setPendingActions(data.actions || []);
@@ -60,7 +69,7 @@ export default function ManagePage() {
         } catch (error) {
             console.error('Error loading actions:', error);
         }
-    }, []);
+    }, [selectedCompany.id]);
 
     useEffect(() => {
         fetchActions();
@@ -93,21 +102,19 @@ export default function ManagePage() {
             const response = await fetch('/api/kill', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ actorId: 'admin@mission-control' })
+                body: JSON.stringify({
+                    actorId: 'admin@mission-control',
+                    companyId: selectedCompany.id
+                })
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(`Fleet stop successful: ${data.stoppedCount} agents stopped`);
-                // Refresh agents list
-                const agentsResponse = await fetch('/api/manager/agents');
-                if (agentsResponse.ok) {
-                    setAgents(await agentsResponse.json());
-                }
+                console.log(`Fleet stop successful: ${data.stoppedCount} agents stopped for ${selectedCompany.name}`);
+                await fetchAgents(); // Refresh the list
             }
         } catch (error) {
             console.error('Fleet kill failed:', error);
-            // Fallback to optimistic update
             setAgents(prev => prev.map(a => ({ ...a, isEmergencyStopped: true, stoppedAt: new Date().toISOString() })));
         }
     };
@@ -159,15 +166,35 @@ export default function ManagePage() {
                     <Link href="/" className="text-sm text-gray-500 hover:text-[var(--primary)] mb-4 inline-block">
                         ← Back to Mission Control
                     </Link>
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-4xl font-bold text-white mb-2">
-                                Fleet <span className="gradient-text">Management</span>
-                            </h1>
-                            <p className="text-gray-400">
-                                Orchestrate your autonomous agents and monitor live execution.
-                            </p>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-4xl font-bold text-white mb-2">
+                                    Fleet <span className="gradient-text">Management</span>
+                                </h1>
+                                <div className="px-3 py-1 bg-[var(--primary)]/10 border border-[var(--primary)]/20 rounded-full text-[var(--primary)] text-[10px] font-mono uppercase tracking-wider">
+                                    {selectedCompany.name}
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 mt-1">
+                                <p className="text-gray-400 text-sm">
+                                    Orchestrate your autonomous agents and monitor live execution.
+                                </p>
+                                <select
+                                    className="bg-[var(--surface-2)] border border-[var(--border)] rounded text-[10px] text-gray-500 px-2 py-0.5 outline-none hover:border-[var(--primary)]/50 transition-colors"
+                                    value={selectedCompany.id}
+                                    onChange={(e) => {
+                                        const company = DEMO_COMPANIES.find(c => c.id === e.target.value);
+                                        if (company) setSelectedCompany(company);
+                                    }}
+                                >
+                                    {DEMO_COMPANIES.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
+
                         <div className="flex items-center gap-3">
                             {/* Enterprise Controls */}
                             <AlertPanel

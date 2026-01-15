@@ -20,10 +20,11 @@ export class SupabaseGovernanceRepository implements GovernanceRepository {
         return data;
     }
 
-    async stopAllAgents(actorId: string, timestamp: string): Promise<any[]> {
+    async stopFleetAgents(companyId: string, actorId: string, timestamp: string): Promise<any[]> {
         const { data, error } = await this.supabase
             .from('am_agents')
             .update({ is_emergency_stopped: true, stopped_at: timestamp, stopped_by: actorId })
+            .eq('company_id', companyId)
             .eq('is_emergency_stopped', false)
             .select();
 

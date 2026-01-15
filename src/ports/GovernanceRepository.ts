@@ -7,6 +7,6 @@ export interface KillSwitchEvent {
 
 export interface GovernanceRepository {
     updateAgentKillStatus(agentId: string, isStopped: boolean, actorId: string, timestamp: string): Promise<any>;
-    stopAllAgents(actorId: string, timestamp: string): Promise<any[]>;
+    stopFleetAgents(companyId: string, actorId: string, timestamp: string): Promise<any[]>;
     logKillEvent(event: KillSwitchEvent): Promise<void>;
 }
