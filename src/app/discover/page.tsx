@@ -79,11 +79,10 @@ export default function DiscoverPage() {
                         ← Back to Dashboard
                     </Link>
                     <h1 className="text-4xl font-bold text-white mb-4">
-                        Discover <span className="gradient-text">Verified Agents</span>
+                        Agent <span className="gradient-text">Marketplace</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl">
-                        Search our registry of pre-vetted, regulatory-compliant AI agents.
-                        Every agent is verified for EU AI Act, GDPR, and industry-specific compliance.
+                        Browse verified agents from EU-compliant vendors. Integrate pre-vetted, regulatory-compliant AI agents into your fleet with confidence.
                     </p>
                 </div>
 
@@ -167,14 +166,17 @@ export default function DiscoverPage() {
                     </div>
                 </div>
 
-                {/* Submit Agent CTA */}
-                <div className="mt-8 p-6 glass-card text-center">
-                    <h3 className="text-lg font-semibold text-white mb-2">Have an AI Agent to Register?</h3>
+                {/* For Vendors CTA */}
+                <div className="mt-8 p-6 glass-card border-amber-500/20">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-amber-500/10 text-amber-400 rounded">For Vendors</span>
+                        <h3 className="text-lg font-semibold text-white">List Your Agent on the Marketplace</h3>
+                    </div>
                     <p className="text-gray-400 text-sm mb-4">
-                        Submit your agent for vetting and join the EU Compliance Agent Registry.
+                        Are you building compliant AI agents? Submit for vetting and reach enterprise customers across the EU.
                     </p>
-                    <Link href="/submit" className="btn-primary" data-testid="submit-agent-cta">
-                        Submit Your Agent →
+                    <Link href="/submit" className="btn-secondary text-sm" data-testid="submit-agent-cta">
+                        Apply as Vendor →
                     </Link>
                 </div>
             </div>

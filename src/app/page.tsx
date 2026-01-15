@@ -28,11 +28,11 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--secondary)]/5" />
 
         <div className="relative max-w-7xl mx-auto text-center">
-          {/* Badge */}
+          {/* Company Context Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border border-[var(--border)] bg-[var(--surface-1)]">
             <span className="status-pulse status-online" />
             <span className="text-sm text-gray-400">
-              {onlineCount} services operational
+              Viewing as: <span className="text-[var(--primary)] font-medium">Berlin AI Labs</span> • {onlineCount} services operational
             </span>
           </div>
 
@@ -50,12 +50,12 @@ export default function HomePage() {
             <span className="text-[var(--primary)]">Runtime Enforcement. ZK-Privacy. EU AI Act Ready.</span>
           </p>
 
-          {/* Stats Row */}
+          {/* Stats Row (Demo Data) */}
           <div className="flex justify-center gap-8 mb-12">
             {[
-              { label: 'Services', value: agents.length },
+              { label: 'Your Services', value: agents.length },
               { label: 'Avg Trust', value: `${avgTrustScore}%` },
-              { label: 'Badges Verified', value: agents.reduce((sum, a) => sum + a.badges.length, 0) },
+              { label: 'Verified Badges', value: agents.reduce((sum, a) => sum + a.badges.length, 0) },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-3xl font-bold text-white">{stat.value}</div>
@@ -183,9 +183,12 @@ export default function HomePage() {
       <section id="fleet" className="py-16 px-6 border-t border-[var(--border)]">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-white">Live Fleet</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-white">Your Fleet</h2>
+              <p className="text-sm text-gray-500">Agents registered under Berlin AI Labs</p>
+            </div>
             <Link href="/discover" className="text-sm text-[var(--primary)] hover:underline">
-              Search all →
+              Browse Marketplace →
             </Link>
           </div>
 

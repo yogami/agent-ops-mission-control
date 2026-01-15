@@ -49,5 +49,6 @@ test.describe('Enterprise Controls - Shadow Discovery', () => {
 
         await page.getByTestId('add-to-registry').first().click();
         await expect(page.getByText('✓ Added').first()).toBeVisible();
+        await expect(page.getByRole('link', { name: 'View Your Fleet →' })).toBeVisible();
     });
 });

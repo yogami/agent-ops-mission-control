@@ -28,7 +28,7 @@ test.describe('Shadow Discovery to Management Persistence', () => {
         await expect(agentRow.getByText('✓ Added')).toBeVisible();
 
         // 5. Navigate to Management Dashboard
-        await page.getByRole('link', { name: 'View Dashboard →' }).click();
+        await page.getByRole('link', { name: 'View Your Fleet →' }).click();
         await expect(page).toHaveURL('/manage');
 
         // 6. Verify agent appears in the 'Scheduled' column

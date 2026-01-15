@@ -297,8 +297,8 @@ export default function ShadowDiscoveryPage() {
                         {addedAgents.size > 0 && (
                             <div className="mt-8 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
                                 <p className="text-emerald-400 text-sm">
-                                    ✓ {addedAgents.size} agent{addedAgents.size !== 1 ? 's' : ''} added to Mission Control.
-                                    <Link href="/manage" className="underline ml-1">View Dashboard →</Link>
+                                    ✓ {addedAgents.size} agent{addedAgents.size !== 1 ? 's' : ''} added to <strong>your Fleet</strong>.
+                                    <Link href="/manage" className="underline ml-1">View Your Fleet →</Link>
                                 </p>
                             </div>
                         )}

@@ -15,7 +15,7 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
         await expect(page.locator('h1')).toContainText('Agent Registry');
 
         // Stats visible - use exact match
-        await expect(page.getByText('Services', { exact: true })).toBeVisible();
+        await expect(page.getByText('Your Services', { exact: true })).toBeVisible();
         await expect(page.getByText('Avg Trust', { exact: true })).toBeVisible();
 
         // Fleet grid visible
@@ -38,9 +38,9 @@ test.describe('Enterprise Discovery Platform - Landing Page', () => {
     test('should navigate to discover page', async ({ page }) => {
         await page.goto('/');
 
-        await page.getByRole('link', { name: 'Browse Registry →' }).click();
+        await page.getByRole('link', { name: 'Browse Marketplace →' }).click();
         await page.waitForURL('/discover');
 
-        await expect(page.locator('h1')).toContainText('Discover');
+        await expect(page.locator('h1')).toContainText('Marketplace');
     });
 });

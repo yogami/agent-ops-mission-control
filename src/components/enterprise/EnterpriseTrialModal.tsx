@@ -35,19 +35,19 @@ export function EnterpriseTrialModal({ isOpen, onClose }: EnterpriseTrialModalPr
                 {isSuccess ? (
                     <div className="text-center">
                         <div className="text-6xl mb-4">🎉</div>
-                        <h2 className="text-2xl font-bold text-white mb-2">Welcome to AgentOps!</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">Welcome, {formData.companyName}!</h2>
                         <p className="text-gray-400 mb-6">
-                            Your 14-day enterprise trial is now active. We&apos;ll reach out within 24 hours to schedule your onboarding call.
+                            Your 14-day enterprise trial for <strong className="text-[var(--primary)]">{formData.companyName}</strong> is now active. We&apos;ll reach out within 24 hours to schedule your onboarding call.
                         </p>
                         <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg mb-6">
                             <p className="text-emerald-400 text-sm">
                                 ✓ Full platform access enabled<br />
-                                ✓ Onboarding call scheduled<br />
+                                ✓ Company profile: <strong>{formData.companyName}</strong><br />
                                 ✓ Dedicated Slack channel created
                             </p>
                         </div>
                         <button onClick={onClose} className="btn-primary">
-                            Get Started →
+                            Go to Your Fleet →
                         </button>
                     </div>
                 ) : (

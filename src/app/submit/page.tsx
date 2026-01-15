@@ -105,13 +105,16 @@ export default function SubmitPage() {
         <main className="min-h-screen py-12 px-6">
             <div className="max-w-2xl mx-auto">
                 <Link href="/discover" className="text-sm text-gray-500 hover:text-[var(--primary)] mb-4 inline-block">
-                    ← Back to Discovery
+                    ← Back to Marketplace
                 </Link>
+                <div className="flex items-center gap-3 mb-2">
+                    <span className="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-amber-500/10 text-amber-400 rounded border border-amber-500/20">For Vendors</span>
+                </div>
                 <h1 className="text-4xl font-bold text-white mb-2">
-                    Submit Your <span className="gradient-text">Agent</span>
+                    List Your <span className="gradient-text">Agent</span>
                 </h1>
                 <p className="text-gray-400 mb-8">
-                    Register your AI agent in the EU Compliance Agent Registry. All submissions undergo automated vetting.
+                    Register your AI agent on the EU Compliance Agent Marketplace. All submissions undergo automated vetting before appearing to enterprise customers.
                 </p>
 
                 {/* Progress Steps */}
@@ -119,7 +122,7 @@ export default function SubmitPage() {
                     {[1, 2, 3].map((s) => (
                         <div key={s} className="flex items-center gap-2">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step === s ? 'bg-[var(--primary)] text-black' :
-                                    step > s ? 'bg-emerald-500 text-white' : 'bg-[var(--surface-2)] text-gray-500'
+                                step > s ? 'bg-emerald-500 text-white' : 'bg-[var(--surface-2)] text-gray-500'
                                 }`}>
                                 {step > s ? '✓' : s}
                             </div>
@@ -216,8 +219,8 @@ export default function SubmitPage() {
                                     onClick={() => handleBadgeToggle(badge.type)}
                                     data-testid={`badge-${badge.type}`}
                                     className={`p-4 rounded-lg border text-left transition-all ${formData.claimedBadges.includes(badge.type)
-                                            ? 'border-[var(--primary)] bg-[var(--primary)]/10'
-                                            : 'border-[var(--border)] bg-[var(--surface-2)] hover:border-[var(--primary)]/50'
+                                        ? 'border-[var(--primary)] bg-[var(--primary)]/10'
+                                        : 'border-[var(--border)] bg-[var(--surface-2)] hover:border-[var(--primary)]/50'
                                         }`}
                                 >
                                     <div className="flex items-center gap-2 mb-1">
