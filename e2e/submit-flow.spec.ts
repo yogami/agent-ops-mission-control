@@ -12,7 +12,7 @@ test.describe('EU Compliance Agent Registry - Submission Flow', () => {
 
         await page.getByTestId('submit-agent-cta').click();
         await expect(page).toHaveURL('/submit');
-        await expect(page.getByRole('heading', { name: /Submit Your Agent/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /List Your Agent/i })).toBeVisible();
     });
 
     test('should display multi-step form', async ({ page }) => {

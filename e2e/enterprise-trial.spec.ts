@@ -44,7 +44,7 @@ test.describe('Enterprise Controls - Trial Flow', () => {
         await page.getByTestId('btn-start-trial').click();
 
         // Wait for success state
-        await expect(page.getByText('Welcome to AgentOps!')).toBeVisible({ timeout: 5000 });
-        await expect(page.getByText('14-day enterprise trial is now active')).toBeVisible();
+        await expect(page.getByText('Welcome, Demo Company!')).toBeVisible({ timeout: 5000 });
+        await expect(page.getByText('14-day enterprise trial for')).toBeVisible();
     });
 });
