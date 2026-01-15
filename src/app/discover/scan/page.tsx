@@ -79,9 +79,28 @@ export default function ShadowDiscoveryPage() {
         }
     };
 
-    const addToRegistry = (agentId: string) => {
-        setAddedAgents(prev => new Set([...prev, agentId]));
+    const addToRegistry = async (agent: DiscoveredAgent) => {
+        try {
+            const response = await fetch('/api/manager/agents', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: agent.name,
+                    description: `Discovered from ${agent.provider} - AI Model: ${agent.modelId || agent.type}`,
+                    trustScore: 85, // Default trust score for discovered agents
+                    badges: [{ type: 'AI_ACT', verified: true }], // Auto-verified in discovery demo
+                    tags: ['discovered', agent.provider, agent.region]
+                }),
+            });
+
+            if (response.ok) {
+                setAddedAgents(prev => new Set([...prev, agent.id]));
+            }
+        } catch (error) {
+            console.error('Failed to add agent to registry:', error);
+        }
     };
+
 
     return (
         <main className="min-h-screen py-12 px-6">
@@ -264,7 +283,7 @@ export default function ShadowDiscoveryPage() {
                                         </span>
                                     ) : (
                                         <button
-                                            onClick={() => addToRegistry(agent.id)}
+                                            onClick={() => addToRegistry(agent)}
                                             className="px-3 py-1.5 text-xs bg-[var(--primary)] text-black rounded-lg hover:bg-[var(--primary-hover)] transition-colors"
                                             data-testid="add-to-registry"
                                         >
