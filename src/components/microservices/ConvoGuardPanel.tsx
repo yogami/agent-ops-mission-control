@@ -68,7 +68,7 @@ export function ConvoGuardPanel() {
 
         try {
             // Switch endpoint based on local ML toggle
-            const endpoint = useLocalML ? '/api/local-validate' : '/api/validate';
+            const endpoint = useLocalML ? '/api/ml-validate' : '/api/validate';
             const response = await fetch(`${CONVOGUARD_API}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -293,16 +293,16 @@ export function ConvoGuardPanel() {
                         <button
                             onClick={() => setUseLocalML(!useLocalML)}
                             className={`px-3 py-1 text-xs rounded-full transition-all ${useLocalML
-                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                    : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                                 }`}
                         >
-                            {useLocalML ? '🧠 Local ML' : '🤖 OpenAI'}
+                            {useLocalML ? '🧠 Neural (DistilBERT)' : '🤖 OpenAI'}
                         </button>
                     </div>
                     <div className="text-xs">
                         {useLocalML ? (
-                            <span className="text-emerald-400">€0 / Prüfung • 94% Genauigkeit</span>
+                            <span className="text-emerald-400">€0 / Prüfung • 100% Krisen-Recall</span>
                         ) : (
                             <span className="text-blue-400">~€0.02 / Prüfung • 99% Genauigkeit</span>
                         )}
