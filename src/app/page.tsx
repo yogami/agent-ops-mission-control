@@ -1,258 +1,113 @@
-/**
- * Enterprise Discovery Platform - Landing Page
- * 
- * "Mission Control" hero + Fleet Overview
- */
-
 'use client';
 
-import { useState } from 'react';
-import { DEMO_COMPANIES, getAgentsByCompany, REGUTECH_AGENTS } from '@/infrastructure/companyAgents';
-import { FleetGrid } from '@/components/FleetGrid';
-import { EnterpriseTrialModal } from '@/components/enterprise';
 import Link from 'next/link';
 
-export default function HomePage() {
-  const [showTrialModal, setShowTrialModal] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState(DEMO_COMPANIES[0]); // ReguTech by default
-
-  // Get agents for the selected company
-  const agents = getAgentsByCompany(selectedCompany.id);
-  const onlineCount = agents.filter(a => a.status === 'online').length;
-  const avgTrustScore = agents.length > 0 ? Math.round(agents.reduce((sum, a) => sum + a.trustScore, 0) / agents.length) : 0;
-
+export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gradient-to-br from-gray-950 via-emerald-950 to-gray-950">
       {/* Hero Section */}
-      <section className="relative py-20 px-6 overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 via-transparent to-[var(--secondary)]/5" />
-
-        <div className="relative max-w-7xl mx-auto text-center">
-          {/* Company Context Badge with Switcher */}
-          <div className="inline-flex items-center gap-3 px-4 py-2 mb-8 rounded-full border border-[var(--border)] bg-[var(--surface-1)]">
-            <span className="status-pulse status-online" />
-            <span className="text-sm text-gray-400">
-              Viewing as:
-            </span>
-            <select
-              className="bg-transparent text-[var(--primary)] font-medium text-sm outline-none cursor-pointer"
-              value={selectedCompany.id}
-              onChange={(e) => {
-                const company = DEMO_COMPANIES.find(c => c.id === e.target.value);
-                if (company) setSelectedCompany(company);
-              }}
-            >
-              {DEMO_COMPANIES.map(c => (
-                <option key={c.id} value={c.id} className="bg-[var(--surface-1)] text-white">
-                  {c.name} {c.isInternal ? '(Internal)' : ''}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-gray-500">• {onlineCount} agents operational</span>
+      <section className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
+        <div className="max-w-4xl">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-sm mb-8">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <span>EU AI Act · BfArM · DiGAV Ready</span>
           </div>
 
-          {/* Main Title */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            <span className="gradient-text">EU Compliance</span>
-            <br />
-            <span className="text-white">Agent Registry</span>
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight">
+            Clinical <span className="text-emerald-400">Compliance</span><br />
+            for Mental Health AI
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-            Platform-agnostic governance layer for AI agents on AWS Bedrock, Azure OpenAI, Google Vertex, and more.
-            <br />
-            <span className="text-[var(--primary)]">Runtime Enforcement. ZK-Privacy. EU AI Act Ready.</span>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-12">
+            Real-time validation of AI therapy conversations.
+            Detect suicide risk, bias, and policy violations.
+            Generate <strong className="text-white">BfArM-ready audit reports</strong> in one click.
           </p>
 
-          {/* Stats Row (Demo Data) */}
-          <div className="flex justify-center gap-8 mb-12">
-            {[
-              { label: 'Your Services', value: agents.length },
-              { label: 'Avg Trust', value: `${avgTrustScore}%` },
-              { label: 'Verified Badges', value: agents.reduce((sum, a) => sum + a.badges.length, 0) },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-3xl font-bold text-white">{stat.value}</div>
-                <div className="text-sm text-gray-500">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mb-6">
-            <button
-              onClick={() => setShowTrialModal(true)}
-              className="btn-primary text-lg px-8 py-4"
-              data-testid="enterprise-trial-btn"
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/audit"
+              className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all transform hover:scale-105"
             >
-              🚀 Start Enterprise Trial
-            </button>
-            <Link href="/discover/scan" className="btn-secondary text-lg px-8 py-4" data-testid="scan-agents-btn">
-              🔍 Scan My Agents
+              Start Compliance Audit →
             </Link>
-          </div>
-          <div className="flex justify-center gap-4">
-            <Link href="/discover" className="text-sm text-gray-400 hover:text-[var(--primary)]">
-              Browse Marketplace →
-            </Link>
-            <Link href="/demo/zk-sla" className="text-sm text-gray-400 hover:text-[var(--primary)]">
-              ZK-SLA Demo →
-            </Link>
-            <Link href="/manage" className="text-sm text-gray-400 hover:text-[var(--primary)]">
-              Fleet Management →
-            </Link>
+            <a
+              href="mailto:contact@berlin-ai-labs.de"
+              className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/20 rounded-lg transition-all"
+            >
+              Book a Demo
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Enterprise Trial Modal */}
-      <EnterpriseTrialModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} />
-
-      {/* Regulated Industries Focus */}
-      <section className="py-24 px-6 border-t border-[var(--border)] bg-[var(--surface-1)]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="flex-1">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Built for Regulated Industries</h2>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                Whether you are building healthcare agents subject to MDR/GDPR or financial bots requiring strict audit trails, AgentOps Platform provides the zero-trust primitives you need.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                {[
-                  { id: '01', title: 'Digital Health', desc: 'Compliance with DiGA & HIPAA standards.', color: 'text-[var(--primary)]' },
-                  { id: '02', title: 'FinTech', desc: 'Strict non-repudiation and audit logs.', color: 'text-[var(--secondary)]' },
-                  { id: '03', title: 'Government', desc: 'Sovereign agent networks via DIDs.', color: 'text-emerald-500' },
-                  { id: '04', title: 'Enterprise AI', desc: 'Cross-department semantic alignment.', color: 'text-amber-500' },
-                ].map((item) => (
-                  <div key={item.id} className="flex items-start gap-4">
-                    <div className={`${item.color} text-xl font-bold font-mono`}>{item.id}</div>
-                    <div>
-                      <h4 className="text-white font-semibold mb-1">{item.title}</h4>
-                      <p className="text-sm text-gray-500">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex-1 w-full max-w-xl">
-              <div className="glass-card p-8 border-[var(--primary)]/20 relative">
-                <div className="space-y-4">
-                  <div className="h-1.5 w-24 bg-[var(--primary)]/40 rounded-full" />
-                  <div className="h-4 w-full bg-white/5 rounded animate-pulse" />
-                  <div className="h-4 w-5/6 bg-white/5 rounded animate-pulse delay-75" />
-                  <div className="h-4 w-4/6 bg-white/5 rounded animate-pulse delay-150" />
-                  <div className="pt-6 flex justify-between">
-                    <div className="h-10 w-24 bg-white/5 rounded-lg" />
-                    <div className="h-10 w-28 bg-[var(--primary)]/20 border border-[var(--primary)]/30 rounded-lg" />
-                  </div>
-                </div>
-                <div className="absolute -top-4 -right-4 glass-card p-4 border-emerald-500/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
-                    <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest">100% Compliant</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Differentiators Section */}
-      <section className="py-16 px-6 border-t border-[var(--border)]">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-12 text-white">
-            AWS builds agents. <span className="gradient-text">We govern them</span> — with EU compliance.
+      {/* Value Props */}
+      <section className="py-24 px-6 bg-black/30">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-white text-center mb-16">
+            Why Digital Health Teams Choose Us
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'Vendor Neutral',
-                description: 'One policy rulebook for OpenAI, Anthropic, Azure, and local models.',
-                icon: '🌐',
-              },
-              {
-                title: 'Privacy-Preserving Audit',
-                description: 'ZK-proofs verify correctness without storing sensitive data.',
-                icon: '🔐',
-              },
-              {
-                title: 'Runtime Enforcement',
-                description: 'Block violations before they reach users, not after.',
-                icon: '⚡',
-              },
-            ].map((item) => (
-              <div key={item.title} className="glass-card p-6 text-center">
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-400">{item.description}</p>
-              </div>
-            ))}
+            <div className="p-8 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="text-4xl mb-4">🛡️</div>
+              <h3 className="text-xl font-semibold text-white mb-3">Real-Time Risk Detection</h3>
+              <p className="text-gray-400">
+                AI analyzes every conversation for suicide ideation, manipulation, and bias —
+                before the patient sees the response.
+              </p>
+            </div>
+
+            <div className="p-8 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="text-4xl mb-4">📋</div>
+              <h3 className="text-xl font-semibold text-white mb-3">1-Click Audit Reports</h3>
+              <p className="text-gray-400">
+                Generate regulator-ready compliance documentation.
+                BfArM, EU AI Act Article 5, DiGAV — all mapped automatically.
+              </p>
+            </div>
+
+            <div className="p-8 bg-white/5 border border-white/10 rounded-2xl">
+              <div className="text-4xl mb-4">🔐</div>
+              <h3 className="text-xl font-semibold text-white mb-3">Tamper-Proof Audit Trail</h3>
+              <p className="text-gray-400">
+                Every validation is cryptographically anchored.
+                Immutable proof that your safety layer was active.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Fleet Section */}
-      <section id="fleet" className="py-16 px-6 border-t border-[var(--border)]">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-white">
-                {selectedCompany.isInternal ? 'Platform Infrastructure' : 'Your Fleet'}
-              </h2>
-              <p className="text-sm text-gray-500">
-                {selectedCompany.isInternal
-                  ? 'Microservices powering Agent Ops Mission Control'
-                  : `Agents registered under ${selectedCompany.name}`
-                }
-              </p>
-            </div>
-            <Link href="/manage" className="text-sm text-[var(--primary)] hover:underline">
-              Open Fleet Manager →
-            </Link>
-          </div>
-
-          <FleetGrid agents={agents} />
-
-          {selectedCompany.isInternal && (
-            <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-              <p className="text-amber-400 text-sm">
-                ⚠️ <strong>Internal View:</strong> You are viewing Berlin AI Labs' infrastructure.
-                Switch to a customer context (ReguTech, Delta Campus) to see the customer experience.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 border-t border-[var(--border)] bg-gradient-to-b from-transparent to-[var(--surface-1)]">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to govern your agent fleet?
+      {/* Social Proof / Urgency */}
+      <section className="py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-6">
+            EU AI Act is Here. Are You Ready?
           </h2>
-          <p className="text-gray-400 mb-8">
-            Start with a free consultation. Enterprise plans from €99/month.
+          <p className="text-lg text-gray-400 mb-12">
+            Mental health chatbots are classified as <strong className="text-red-400">high-risk AI systems</strong>.
+            Non-compliance means fines up to €35 million or 7% of global revenue.
           </p>
-          <a
-            href="mailto:hello@berlinailabs.de?subject=AgentOps%20Platform%20Demo"
-            className="btn-primary text-lg"
+
+          <Link
+            href="/audit"
+            className="inline-flex px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all"
           >
-            Contact Sales
-          </a>
+            Check Your AI Compliance Now
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 border-t border-[var(--border)]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <div>© 2026 Berlin AI Labs. EU Compliance Agent Registry.</div>
-          <div className="flex gap-6">
-            <a href="https://berlinailabs.de" className="hover:text-[var(--primary)]">Website</a>
-            <a href="https://github.com/yogami" className="hover:text-[var(--primary)]">GitHub</a>
+      <footer className="py-12 px-6 border-t border-white/10">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-gray-500 text-sm">
+            © 2026 Berlin AI Labs · DiGA Compliance Copilot
+          </div>
+          <div className="flex gap-6 text-gray-500 text-sm">
+            <a href="mailto:contact@berlin-ai-labs.de" className="hover:text-white transition-colors">Contact</a>
+            <span>Berlin, Germany</span>
           </div>
         </div>
       </footer>
