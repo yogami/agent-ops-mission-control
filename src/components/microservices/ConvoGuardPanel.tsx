@@ -57,6 +57,7 @@ export function ConvoGuardPanel() {
     const [error, setError] = useState<string | null>(null);
     const [showAuditView, setShowAuditView] = useState(false);
     const [selectedPolicy, setSelectedPolicy] = useState('MENTAL_HEALTH_EU_V1');
+    const [useLocalML, setUseLocalML] = useState(true); // Default to local ML (€0 cost)
 
     const testCompliance = async () => {
         if (!input.trim()) return;
@@ -66,7 +67,9 @@ export function ConvoGuardPanel() {
         setResult(null);
 
         try {
-            const response = await fetch(`${CONVOGUARD_API}/api/validate`, {
+            // Switch endpoint based on local ML toggle
+            const endpoint = useLocalML ? '/api/local-validate' : '/api/validate';
+            const response = await fetch(`${CONVOGUARD_API}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -272,8 +275,8 @@ export function ConvoGuardPanel() {
                             key={pack.id}
                             onClick={() => setSelectedPolicy(pack.id)}
                             className={`flex-1 py-2 px-2 rounded text-xs transition-all ${selectedPolicy === pack.id
-                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
                                 }`}
                             title={pack.desc}
                         >
@@ -281,6 +284,29 @@ export function ConvoGuardPanel() {
                             <span className="hidden sm:inline">{pack.name.split(' / ')[0]}</span>
                         </button>
                     ))}
+                </div>
+
+                {/* Local ML / OpenAI Toggle */}
+                <div className="flex items-center justify-between p-2 bg-black/20 rounded-lg border border-white/5">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-400">Engine:</span>
+                        <button
+                            onClick={() => setUseLocalML(!useLocalML)}
+                            className={`px-3 py-1 text-xs rounded-full transition-all ${useLocalML
+                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                    : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                }`}
+                        >
+                            {useLocalML ? '🧠 Local ML' : '🤖 OpenAI'}
+                        </button>
+                    </div>
+                    <div className="text-xs">
+                        {useLocalML ? (
+                            <span className="text-emerald-400">€0 / Prüfung • 94% Genauigkeit</span>
+                        ) : (
+                            <span className="text-blue-400">~€0.02 / Prüfung • 99% Genauigkeit</span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="relative">
