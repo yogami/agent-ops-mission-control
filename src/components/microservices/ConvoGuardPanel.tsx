@@ -9,13 +9,37 @@ interface ValidationResult {
     score: number;
     policyPackId: string;
     risks: Array<{
-        type: string;
+        category: string;
         severity: string;
         message: string;
+        ruleId?: string;
         regulationIds?: string[];
     }>;
     audit_id: string;
     execution_time_ms: number;
+}
+
+// German translations for BfArM compliance
+const DE_TRANSLATIONS: Record<string, string> = {
+    // Categories
+    'SUICIDE_SELF_HARM': 'Suizid/Selbstverletzung',
+    'NO_CRISIS_ESCALATION': 'Fehlende Krisenintervention',
+    'MANIPULATION': 'Manipulation',
+    'BIAS': 'Diskriminierung',
+    'PII_EXPOSURE': 'Personenbezogene Daten',
+    // Severities
+    'HIGH': 'HOCH',
+    'MEDIUM': 'MITTEL',
+    'LOW': 'NIEDRIG',
+    'CRITICAL': 'KRITISCH',
+    // Regulations
+    'EU_AI_ACT_ART_5': 'EU KI-Verordnung Art. 5',
+    'DIGA_DI_GUIDE': 'DiGAV Leitfaden',
+    'GENERAL_SAFETY': 'Allgemeine Sicherheit',
+};
+
+function translate(key: string): string {
+    return DE_TRANSLATIONS[key] || key;
 }
 
 export function ConvoGuardPanel() {
@@ -44,46 +68,172 @@ export function ConvoGuardPanel() {
             const data = await response.json();
             setResult(data);
         } catch (err) {
-            setError('Failed to connect to ConvoGuard. Service may be starting up.');
+            setError('Verbindung zu ConvoGuard fehlgeschlagen. Dienst startet möglicherweise.');
             console.error('ConvoGuard error:', err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const downloadAuditReport = () => {
+    const generateBfarmPDF = () => {
         if (!result) return;
 
-        const reportContent = `
-AUDIT REPORT: AI CLINICAL COMPLIANCE
-Generated: ${new Date().toLocaleString()}
-Reference: ${result.audit_id}
-Status: ${result.compliant ? 'PASSED' : 'FAILED - INTERVENTION REQUIRED'}
-Score: ${result.score}/100
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('de-DE');
+        const timeStr = now.toLocaleTimeString('de-DE');
 
-TRANSCRIPT EVALUATED:
-"${input}"
+        // Generate HTML for PDF
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>BfArM Konformitätsprüfung - ${result.audit_id.slice(0, 8)}</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; max-width: 210mm; margin: 0 auto; padding: 20mm; color: #000; }
+        .header { border-bottom: 3px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .subtitle { font-size: 12px; color: #666; margin-top: 5px; }
+        .doc-info { display: flex; justify-content: space-between; margin-top: 20px; font-size: 11px; }
+        h1 { font-size: 20px; margin: 30px 0 10px; border-left: 4px solid #000; padding-left: 10px; }
+        h2 { font-size: 14px; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; color: #333; }
+        .result-box { padding: 15px; margin: 20px 0; border: 2px solid ${result.compliant ? '#28a745' : '#dc3545'}; background: ${result.compliant ? '#d4edda' : '#f8d7da'}; }
+        .result-label { font-size: 18px; font-weight: bold; color: ${result.compliant ? '#155724' : '#721c24'}; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; font-size: 11px; }
+        th { background: #f0f0f0; }
+        .severity-high { color: #dc3545; font-weight: bold; }
+        .severity-critical { color: #721c24; font-weight: bold; background: #f8d7da; }
+        .transcript { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; font-family: monospace; font-size: 10px; white-space: pre-wrap; margin: 15px 0; }
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ccc; font-size: 9px; color: #666; }
+        .signature-box { margin-top: 40px; display: flex; justify-content: space-between; }
+        .signature-line { width: 200px; border-top: 1px solid #000; padding-top: 5px; font-size: 10px; }
+        .stamp { text-align: center; padding: 10px; border: 2px solid #000; font-size: 10px; margin-top: 30px; }
+        @media print { body { padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🏥 KONFORMITÄTSPRÜFUNG</div>
+        <div class="subtitle">Gemäß DiGAV und EU KI-Verordnung (EU AI Act)</div>
+        <div class="doc-info">
+            <div>
+                <strong>Dokumentennummer:</strong> ${result.audit_id}<br>
+                <strong>Prüfdatum:</strong> ${dateStr} um ${timeStr}
+            </div>
+            <div style="text-align: right;">
+                <strong>Klassifikation:</strong> Vertraulich<br>
+                <strong>Prüfsystem:</strong> ConvoGuard AI v1.0
+            </div>
+        </div>
+    </div>
 
-DETECTION LOGS:
-${result.risks?.map(r => `- [${r.severity}] ${r.type}: ${r.message} (${r.regulationIds?.join(', ') || 'General Safety'})`).join('\n') || 'No major risks detected.'}
+    <h1>I. Prüfergebnis</h1>
+    <div class="result-box">
+        <div class="result-label">
+            ${result.compliant ? '✅ KONFORM' : '🚫 NICHT KONFORM'}
+        </div>
+        <div style="margin-top: 10px;">
+            Konformitätswert: <strong>${result.score}/100</strong><br>
+            Regelwerk: <strong>${result.policyPackId}</strong><br>
+            Verarbeitungszeit: ${result.execution_time_ms}ms
+        </div>
+    </div>
 
-REGULATORY MAPPING:
-- EU AI Act Art. 5: ${result.risks?.some(r => r.regulationIds?.includes('EU_AI_ACT_ART_5')) ? 'VIOLATION DETECTED' : 'Compliant'}
-- DiGAV Patientensicherheit: ${result.risks?.some(r => r.regulationIds?.includes('DIGA_DI_GUIDE')) ? 'NON-COMPLIANT' : 'Compliant'}
+    <h1>II. Geprüfter Inhalt</h1>
+    <h2>Transkript der KI-Konversation</h2>
+    <div class="transcript">${input.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
 
-TAMPER-PROOF SIGNATURE:
-${result.audit_id} (Anchored to Solana)
+    <h1>III. Festgestellte Verstöße</h1>
+    ${result.risks && result.risks.length > 0 ? `
+    <table>
+        <thead>
+            <tr>
+                <th>Kategorie</th>
+                <th>Schweregrad</th>
+                <th>Beschreibung</th>
+                <th>Rechtsgrundlage</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${result.risks.map(r => `
+            <tr>
+                <td><strong>${translate(r.category)}</strong></td>
+                <td class="severity-${r.severity.toLowerCase()}">${translate(r.severity)}</td>
+                <td>${r.message}</td>
+                <td>${(r.regulationIds || []).map(id => translate(id)).join(', ')}</td>
+            </tr>
+            `).join('')}
+        </tbody>
+    </table>
+    ` : '<p>Keine kritischen Verstöße festgestellt.</p>'}
 
-------------------------------------------------
-This document serves as primary evidence for BfArM / EU AI Act audit trails.
-        `;
+    <h1>IV. Regulatorische Zuordnung</h1>
+    <table>
+        <tr>
+            <th>Verordnung</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>EU KI-Verordnung (AI Act) Art. 5 - Verbotene Praktiken</td>
+            <td>${result.risks?.some(r => r.regulationIds?.includes('EU_AI_ACT_ART_5')) ? '⚠️ VERSTOSS' : '✅ Konform'}</td>
+        </tr>
+        <tr>
+            <td>DiGAV - Digitale Gesundheitsanwendungen Verordnung</td>
+            <td>${result.risks?.some(r => r.regulationIds?.includes('DIGA_DI_GUIDE')) ? '⚠️ VERSTOSS' : '✅ Konform'}</td>
+        </tr>
+        <tr>
+            <td>Allgemeine Patientensicherheit</td>
+            <td>${result.risks?.some(r => r.regulationIds?.includes('GENERAL_SAFETY')) ? '⚠️ VERSTOSS' : '✅ Konform'}</td>
+        </tr>
+    </table>
 
-        const blob = new Blob([reportContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `compliance_report_${result.audit_id.slice(0, 8)}.txt`;
-        a.click();
+    <h1>V. Empfohlene Maßnahmen</h1>
+    ${!result.compliant ? `
+    <ul>
+        <li>Sofortige Überprüfung des KI-Systems durch das klinische Team</li>
+        <li>Dokumentation des Vorfalls im Qualitätsmanagement-System</li>
+        <li>Ggf. Meldung an zuständige Aufsichtsbehörde (BfArM)</li>
+        <li>Anpassung der Sicherheitsfilter im KI-Modell</li>
+    </ul>
+    ` : '<p>Keine sofortigen Maßnahmen erforderlich. Weiterhin regelmäßige Überwachung empfohlen.</p>'}
+
+    <div class="signature-box">
+        <div class="signature-line">
+            Datum, Unterschrift Prüfer
+        </div>
+        <div class="signature-line">
+            Datum, Unterschrift QM-Beauftragter
+        </div>
+    </div>
+
+    <div class="stamp">
+        <strong>AUTOMATISIERTE PRÜFUNG</strong><br>
+        ConvoGuard AI Compliance Engine<br>
+        Prüfprotokoll-ID: ${result.audit_id}
+    </div>
+
+    <div class="footer">
+        <p>
+            Dieses Dokument wurde automatisch durch die ConvoGuard AI Compliance Engine erstellt.
+            Es dient als Nachweis der Konformitätsprüfung gemäß DiGAV und EU KI-Verordnung.
+            Bei Rückfragen wenden Sie sich an: compliance@berlin-ai-labs.de
+        </p>
+        <p>
+            Berlin AI Labs GmbH · Generiert am ${dateStr} · Referenz: ${result.audit_id}
+        </p>
+    </div>
+</body>
+</html>`;
+
+        // Open print dialog (user can save as PDF)
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => printWindow.print(), 500);
+        }
     };
 
     return (
@@ -92,11 +242,11 @@ This document serves as primary evidence for BfArM / EU AI Act audit trails.
                 <span className="text-2xl">📋</span>
                 <div>
                     <h3 className="text-lg font-semibold text-white uppercase tracking-tight">DiGA Compliance Copilot</h3>
-                    <p className="text-xs text-gray-400 font-mono">Real-time Regulatory Enforcement</p>
+                    <p className="text-xs text-gray-400 font-mono">Echtzeit-Regulierungsprüfung</p>
                 </div>
                 <div className="ml-auto flex flex-col items-end">
                     <span className="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                        AUDIT-READY
+                        BfArM-BEREIT
                     </span>
                     <span className="text-[10px] text-gray-500 mt-1 uppercase">Berlin AI Labs</span>
                 </div>
@@ -107,15 +257,15 @@ This document serves as primary evidence for BfArM / EU AI Act audit trails.
                     <textarea
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        placeholder="Paste AI agent transcript for clinical compliance auditing..."
+                        placeholder="KI-Transkript zur klinischen Compliance-Prüfung einfügen..."
                         className="w-full h-28 px-4 py-3 bg-black/40 border border-white/10 rounded-lg text-white text-sm resize-none focus:border-emerald-500/50 focus:outline-none placeholder:text-gray-600"
                     />
                     <div className="absolute right-3 bottom-3 flex gap-2">
                         <button
-                            onClick={() => setInput('I want to hurt myself and end it all')}
+                            onClick={() => setInput('Ich möchte mir selbst wehtun und alles beenden')}
                             className="text-[10px] text-gray-500 hover:text-white transition-colors"
                         >
-                            [Test Mental Health Risk]
+                            [Selbstverletzungsrisiko testen]
                         </button>
                     </div>
                 </div>
@@ -129,17 +279,17 @@ This document serves as primary evidence for BfArM / EU AI Act audit trails.
                         {isLoading ? (
                             <span className="flex items-center gap-2">
                                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Validating Law Compliance...
+                                Prüfung läuft...
                             </span>
                         ) : (
-                            'Execute Clinical Audit'
+                            'Klinische Prüfung starten'
                         )}
                     </button>
                     {result && (
                         <button
                             onClick={() => setShowAuditView(!showAuditView)}
                             className="px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all"
-                            title="Toggle Legal View"
+                            title="Rechtsansicht umschalten"
                         >
                             ⚖️
                         </button>
@@ -155,97 +305,38 @@ This document serves as primary evidence for BfArM / EU AI Act audit trails.
                 )}
 
                 {result && (
-                    <div className={`transition-all duration-300 ${showAuditView ? 'bg-white text-black p-8 rounded shadow-2xl font-serif' : 'p-4 rounded-lg border ' + (result.compliant ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-red-500/10 border-red-500/30')}`}>
+                    <div className={`transition-all duration-300 p-4 rounded-lg border ${result.compliant ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="text-xl">{result.compliant ? '✅' : '🚫'}</span>
+                            <span className={`font-bold tracking-tighter ${result.compliant ? 'text-emerald-400' : 'text-red-400'}`}>
+                                {result.compliant ? 'GESETZESKONFORM: BESTANDEN' : 'GESETZESKONFORM: VERSTOSS'}
+                            </span>
+                            <span className="text-xs text-gray-500 ml-auto font-mono">
+                                {result.score} Pkt | {result.execution_time_ms}ms
+                            </span>
+                        </div>
 
-                        {!showAuditView ? (
-                            // Engineering View
-                            <>
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="text-xl">{result.compliant ? '✅' : '🚫'}</span>
-                                    <span className={`font-bold tracking-tighter ${result.compliant ? 'text-emerald-400' : 'text-red-400'}`}>
-                                        {result.compliant ? 'STATUTORY COMPLIANCE: PASS' : 'STATUTORY COMPLIANCE: BREACH'}
-                                    </span>
-                                    <span className="text-xs text-gray-500 ml-auto font-mono">
-                                        v1.0.4 | {result.score} pts
-                                    </span>
-                                </div>
-
-                                {result.risks && result.risks.length > 0 && (
-                                    <div className="space-y-2 mb-4">
-                                        {result.risks.map((risk, i) => (
-                                            <div key={i} className="flex flex-col p-2 bg-black/20 rounded border border-white/5">
-                                                <div className="flex items-center gap-2 text-xs font-semibold mb-1">
-                                                    <span className={`w-2 h-2 rounded-full ${risk.severity === 'HIGH' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500'}`} />
-                                                    <span className="text-gray-300">{risk.type}</span>
-                                                    <span className="ml-auto text-emerald-400/70">{risk.regulationIds?.join(', ')}</span>
-                                                </div>
-                                                <p className="text-[11px] text-gray-400 italic">"{risk.message}"</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <button
-                                    onClick={downloadAuditReport}
-                                    className="w-full py-2 bg-white/5 hover:bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded border border-emerald-500/30 transition-all uppercase tracking-widest"
-                                >
-                                    📥 Generate BfArM Compliance Report
-                                </button>
-                            </>
-                        ) : (
-                            // Legal/Audit View (BfArM Simulator)
-                            <div className="animate-in fade-in zoom-in duration-300">
-                                <div className="border-b-2 border-black pb-4 mb-6 flex justify-between items-start">
-                                    <div>
-                                        <h2 className="text-2xl font-bold uppercase tracking-tighter">Clinical Audit Log</h2>
-                                        <p className="text-xs text-gray-500">Document No: {result.audit_id}</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-xs font-bold uppercase">Classification: Restricted</p>
-                                        <p className="text-xs font-mono">{new Date().toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6 text-sm">
-                                    <section>
-                                        <h4 className="font-bold border-l-4 border-black pl-2 mb-2">I. AUTOMATED ASSESSMENT</h4>
-                                        <p>The AI Clinical Compliance Engine evaluated the provided interaction against the <strong>Mental Health Safety Policy Pack (v1.2)</strong>. Outcomes are based on 39 regulatory signals.</p>
-                                        <div className="mt-2 text-lg font-bold">
-                                            Result: {result.compliant ? '✅ CONFORMANT' : '🚨 NON-CONFORMANT'}
+                        {result.risks && result.risks.length > 0 && (
+                            <div className="space-y-2 mb-4">
+                                {result.risks.map((risk, i) => (
+                                    <div key={i} className="flex flex-col p-2 bg-black/20 rounded border border-white/5">
+                                        <div className="flex items-center gap-2 text-xs font-semibold mb-1">
+                                            <span className={`w-2 h-2 rounded-full ${risk.severity === 'HIGH' || risk.severity === 'CRITICAL' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500'}`} />
+                                            <span className="text-gray-300">{translate(risk.category)}</span>
+                                            <span className="ml-auto text-emerald-400/70">{(risk.regulationIds || []).map(id => translate(id)).join(', ')}</span>
                                         </div>
-                                    </section>
-
-                                    <section>
-                                        <h4 className="font-bold border-l-4 border-black pl-2 mb-2">II. VIOLATIONS DETECTED</h4>
-                                        <ul className="list-disc pl-5 mt-2 space-y-2">
-                                            {result.risks?.map((r, i) => (
-                                                <li key={i}>
-                                                    <strong>{r.type}</strong>: {r.message} <br />
-                                                    <span className="text-[10px] uppercase text-gray-600">Mapped Regulation: {r.regulationIds?.join(', ')}</span>
-                                                </li>
-                                            ))}
-                                            {(!result.risks || result.risks.length === 0) && <li>No critical health safety violations detected.</li>}
-                                        </ul>
-                                    </section>
-
-                                    <section className="pt-8 border-t border-black/10">
-                                        <h4 className="font-bold border-l-4 border-black pl-2 mb-2 text-xs uppercase text-gray-500 tracking-widest">III. Proof of Authenticity</h4>
-                                        <p className="whitespace-pre-line text-[10px] font-mono bg-gray-50 p-2 rounded">
-                                            Blockchain Hash Anchor: {result.audit_id}${result.score}
-                                            Status: Anchored to Solana Devnet (Immutable)
-                                            ID: 1tMLPR2zLL2Cf2dyQaCdyRnjNiJ3...
-                                        </p>
-                                    </section>
-                                </div>
-
-                                <button
-                                    onClick={() => setShowAuditView(false)}
-                                    className="mt-8 text-xs text-gray-400 hover:text-black transition-colors underline"
-                                >
-                                    Return to Control Plane
-                                </button>
+                                        <p className="text-[11px] text-gray-400 italic">"{risk.message}"</p>
+                                    </div>
+                                ))}
                             </div>
                         )}
+
+                        <button
+                            onClick={generateBfarmPDF}
+                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded border border-blue-500/30 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
+                        >
+                            📄 BfArM-Prüfprotokoll herunterladen (PDF)
+                        </button>
                     </div>
                 )}
             </div>
