@@ -42,12 +42,21 @@ function translate(key: string): string {
     return DE_TRANSLATIONS[key] || key;
 }
 
+// Policy packs available
+const POLICY_PACKS = [
+    { id: 'MENTAL_HEALTH_EU_V1', name: 'DiGA / Mental Health', icon: '🧠', desc: 'Psychische Gesundheit' },
+    { id: 'BAFIN_FINTECH_DE_V1', name: 'BaFin / Fintech', icon: '💰', desc: 'Finanzberatung' },
+    { id: 'LEGAL_CHATBOT_EU_V1', name: 'Legal / Rechtsberatung', icon: '⚖️', desc: 'Rechtsassistenz' },
+    { id: 'DIGA_MDR_DE_V1', name: 'DiGA MDR / MedTech', icon: '🏥', desc: 'Medizinprodukte' },
+];
+
 export function ConvoGuardPanel() {
     const [input, setInput] = useState('');
     const [result, setResult] = useState<ValidationResult | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showAuditView, setShowAuditView] = useState(false);
+    const [selectedPolicy, setSelectedPolicy] = useState('MENTAL_HEALTH_EU_V1');
 
     const testCompliance = async () => {
         if (!input.trim()) return;
@@ -60,7 +69,10 @@ export function ConvoGuardPanel() {
             const response = await fetch(`${CONVOGUARD_API}/api/validate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ transcript: input }),
+                body: JSON.stringify({
+                    transcript: input,
+                    policyPackId: selectedPolicy
+                }),
             });
 
             if (!response.ok) throw new Error('Validation failed');
@@ -253,6 +265,24 @@ export function ConvoGuardPanel() {
             </div>
 
             <div className="space-y-4">
+                {/* Policy Pack Selector */}
+                <div className="flex gap-1 p-1 bg-black/30 rounded-lg border border-white/5">
+                    {POLICY_PACKS.map((pack) => (
+                        <button
+                            key={pack.id}
+                            onClick={() => setSelectedPolicy(pack.id)}
+                            className={`flex-1 py-2 px-2 rounded text-xs transition-all ${selectedPolicy === pack.id
+                                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                }`}
+                            title={pack.desc}
+                        >
+                            <span className="mr-1">{pack.icon}</span>
+                            <span className="hidden sm:inline">{pack.name.split(' / ')[0]}</span>
+                        </button>
+                    ))}
+                </div>
+
                 <div className="relative">
                     <textarea
                         value={input}
