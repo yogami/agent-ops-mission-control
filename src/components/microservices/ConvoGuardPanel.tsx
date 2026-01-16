@@ -331,12 +331,38 @@ export function ConvoGuardPanel() {
                             </div>
                         )}
 
-                        <button
-                            onClick={generateBfarmPDF}
-                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded border border-blue-500/30 transition-all uppercase tracking-widest flex items-center justify-center gap-2"
-                        >
-                            📄 BfArM-Prüfprotokoll herunterladen (PDF)
-                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                onClick={generateBfarmPDF}
+                                className="py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded border border-blue-500/30 transition-all uppercase tracking-widest flex items-center justify-center gap-1"
+                            >
+                                📄 PDF
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        const response = await fetch(`${CONVOGUARD_API}/api/bfarm-xml`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ transcript: input }),
+                                        });
+                                        if (!response.ok) throw new Error('XML generation failed');
+                                        const blob = await response.blob();
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `bfarm_${result?.audit_id?.slice(0, 8) || 'report'}.xml`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                    } catch (err) {
+                                        alert('XML-Download fehlgeschlagen');
+                                    }
+                                }}
+                                className="py-3 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded border border-purple-500/30 transition-all uppercase tracking-widest flex items-center justify-center gap-1"
+                            >
+                                📋 XML (BfArM)
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
