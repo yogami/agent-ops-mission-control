@@ -26,7 +26,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/audit"
+              href="/fast-audit"
               className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all transform hover:scale-105"
             >
               Start Compliance Audit →
@@ -71,8 +71,8 @@ export default function Home() {
               <div className="text-4xl mb-4">🔐</div>
               <h3 className="text-xl font-semibold text-white mb-3">Tamper-Proof Audit Trail</h3>
               <p className="text-gray-400">
-                Every validation is cryptographically anchored.
-                Immutable proof that your safety layer was active.
+                Every validation is cryptographically signed (SHA-256).
+                Local, immutable proof that your safety layer was active.
               </p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
           </p>
 
           <Link
-            href="/audit"
+            href="/fast-audit"
             className="inline-flex px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold rounded-lg transition-all"
           >
             Check Your AI Compliance Now
