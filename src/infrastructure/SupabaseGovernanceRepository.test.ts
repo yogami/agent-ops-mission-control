@@ -29,7 +29,7 @@ describe('SupabaseGovernanceRepository', () => {
 
     it('should stop all agents', async () => {
         mockSupabase.select.mockResolvedValueOnce({ data: [{ id: '1' }], error: null });
-        const result = await repo.stopAllAgents('actor-1', 'time');
+        const result = await repo.stopFleetAgents('company-1', 'actor-1', 'time');
 
         expect(mockSupabase.update).toHaveBeenCalledWith(expect.objectContaining({ is_emergency_stopped: true }));
         expect(result).toHaveLength(1);

@@ -135,4 +135,20 @@ export const SEED_AGENTS: Agent[] = [
         pricePerRequest: 0.05,
         lastHealthCheck: new Date(),
     },
+    {
+        id: 'quantum-grid-resilience',
+        name: 'Quantum Grid Resilience',
+        description: 'Topological Blackout Prevention for Energy Grids. R-QAOA "Dark Weather" solver vs. Dunkelflaute.',
+        category: 'utility',
+        status: 'online',
+        trustScore: 96,
+        badges: [
+            { type: 'AI_ACT', verified: true },
+            { type: 'GDPR', verified: true },
+        ],
+        endpointUrl: 'https://quantum-grid-resilience-production.up.railway.app',
+        tags: ['energy', 'resilience', 'quantum', 'grid'],
+        pricePerRequest: 0.01,
+        lastHealthCheck: new Date(),
+    },
 ];

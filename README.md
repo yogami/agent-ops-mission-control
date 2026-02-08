@@ -4,7 +4,7 @@ It is governed by the global rules in **[berlin-ai-infra](https://github.com/yog
 
 ---
 
-# AgentOps Platform
+# AgentOps Mission Control
 
 > Enterprise Discovery Platform for pre-vetted, regulatory-compliant AI agents.
 

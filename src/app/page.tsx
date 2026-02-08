@@ -31,12 +31,12 @@ export default function Home() {
             >
               Start Compliance Audit →
             </Link>
-            <a
-              href="mailto:contact@berlin-ai-labs.de"
-              className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border border-white/20 rounded-lg transition-all"
+            <Link
+              href="/gdpr"
+              className="px-8 py-4 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-lg transition-all font-semibold"
             >
-              Book a Demo
-            </a>
+              🛡️ GDPR Compliance Center
+            </Link>
           </div>
         </div>
       </section>
@@ -76,6 +76,22 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          {/* Fleet Scale Metrics */}
+          <div className="grid grid-cols-3 gap-6 mt-16">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-400">{'<'}20ms</div>
+              <div className="text-sm text-gray-500 mt-1">Neural Inference</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-400">10K+</div>
+              <div className="text-sm text-gray-500 mt-1">Agent Fleet Ready</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-400">100%</div>
+              <div className="text-sm text-gray-500 mt-1">Crisis Recall</div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -106,6 +122,8 @@ export default function Home() {
             © 2026 Berlin AI Labs · DiGA Compliance Copilot
           </div>
           <div className="flex gap-6 text-gray-500 text-sm">
+            <Link href="/gdpr" className="hover:text-cyan-400 transition-colors">GDPR Center</Link>
+            <Link href="/audit" className="hover:text-white transition-colors">Audit</Link>
             <a href="mailto:contact@berlin-ai-labs.de" className="hover:text-white transition-colors">Contact</a>
             <span>Berlin, Germany</span>
           </div>
