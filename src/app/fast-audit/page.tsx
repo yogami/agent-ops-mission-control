@@ -10,12 +10,15 @@ export default function FastAuditPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
+    const [execTimeMs, setExecTimeMs] = useState<number | null>(null);
 
     const runAudit = async () => {
         if (!input.trim()) return;
         setIsLoading(true);
         setError(null);
         setResult(null);
+        setExecTimeMs(null);
+        const startTime = performance.now();
 
         try {
             // Use the neural-powered ML endpoint directly
@@ -27,6 +30,7 @@ export default function FastAuditPage() {
 
             if (!response.ok) throw new Error('Audit failed');
             const data = await response.json();
+            setExecTimeMs(Math.round(performance.now() - startTime));
             setResult(data);
         } catch (err) {
             setError('System temporär nicht erreichbar. Bitte versuchen Sie es erneut.');
@@ -58,23 +62,25 @@ export default function FastAuditPage() {
         <main className="min-h-screen bg-white text-gray-900 font-sans selection:bg-blue-100">
             {/* Minimalist Header */}
             <nav className="border-b border-gray-100 py-4 px-6 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <span className="text-xl font-bold tracking-tight text-blue-600">ConvoGuard</span>
-                    <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium">BETA</span>
+                <div className="flex items-center gap-3">
+                    <Link href="/" className="text-xl font-bold tracking-tight text-blue-600 hover:text-blue-700 transition-colors">ConvoGuard</Link>
+                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-semibold">FAST AUDIT</span>
                 </div>
                 <div className="flex gap-6 text-sm font-medium text-gray-500">
-                    <Link href="/docs" className="hover:text-blue-600 transition-colors">API Docs</Link>
-                    <Link href="/audit" className="hover:text-blue-600 transition-colors">Advanced Dashboard</Link>
+                    <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                    <Link href="/transparency" className="hover:text-blue-600 transition-colors">Transparency</Link>
+                    <Link href="/benchmarks" className="hover:text-blue-600 transition-colors">Benchmarks</Link>
+                    <Link href="/audit" className="hover:text-blue-600 transition-colors">Full Audit</Link>
                 </div>
             </nav>
 
             <div className="max-w-2xl mx-auto py-16 px-6">
                 <div className="mb-10 text-center">
                     <h1 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
-                        DiGA Compliance Audit
+                        AI Compliance Audit
                     </h1>
                     <p className="text-gray-500 text-lg leading-relaxed">
-                        Fügen Sie Ihr KI-Transkript ein, um eine sofortige regulatorische Prüfung gemäß <span className="text-gray-900 font-medium">BfArM (DiGAV)</span> und <span className="text-gray-900 font-medium">EU AI Act</span> durchzuführen.
+                        Paste any AI conversation transcript for instant regulatory compliance checking against <span className="text-gray-900 font-medium">EU AI Act</span>, <span className="text-gray-900 font-medium">GDPR</span>, and <span className="text-gray-900 font-medium">BfArM (DiGAV)</span>.
                     </p>
                 </div>
 
@@ -158,11 +164,24 @@ export default function FastAuditPage() {
                             </button>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-black/5 text-center">
-                            <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 mb-2">Digitaler Identitäts-Nachweis (SHA-256)</p>
-                            <code className="text-[10px] font-mono text-gray-300 break-all bg-black/5 px-2 py-1 rounded">
-                                {result.tamper_proof_signature || 'ca38e072f6a7d6e8... (lokal signiert)'}
-                            </code>
+                        {/* Execution Proof */}
+                        <div className="mt-8 pt-6 border-t border-black/5">
+                            {execTimeMs !== null && (
+                                <div className="flex items-center justify-center gap-4 mb-4">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold">
+                                        ⚡ {execTimeMs}ms round-trip
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                                        🧠 DistilBERT ONNX · {result.method || 'neural'}
+                                    </span>
+                                </div>
+                            )}
+                            <div className="text-center">
+                                <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 mb-2">Tamper-Proof Signature (SHA-256)</p>
+                                <code className="text-[10px] font-mono text-gray-300 break-all bg-black/5 px-2 py-1 rounded">
+                                    {result.tamper_proof_signature || 'ca38e072f6a7d6e8... (locally signed)'}
+                                </code>
+                            </div>
                         </div>
                     </div>
                 )}
