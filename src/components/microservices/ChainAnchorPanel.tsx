@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { getCircuitBreaker } from '@/infrastructure/CircuitBreaker';
 
 const CHAIN_ANCHOR_API = 'https://agent-chain-anchor-production.up.railway.app';
+const chainAnchorBreaker = getCircuitBreaker('chain-anchor', { failureThreshold: 3, recoveryTimeMs: 30000 });
 
 interface AnchorResult {
     txId: string;
@@ -19,35 +21,44 @@ export function ChainAnchorPanel() {
     const [error, setError] = useState<string | null>(null);
 
     const anchorProof = async () => {
+        if (!chainAnchorBreaker.canExecute()) {
+            setError('Circuit breaker OPEN — Chain Anchor service degraded. Auto-recovery in progress.');
+            return;
+        }
+
         setIsAnchoring(true);
         setError(null);
         setResult(null);
 
-        // Generate a demo SLA proof payload
         const proofHash = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`;
 
         try {
-            const response = await fetch(`${CHAIN_ANCHOR_API}/api/anchor`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    proofHash,
-                    proofType: 'sla',
-                    agentDid: 'did:web:mission-control.berlin-ai-labs.de',
-                    metadata: {
-                        source: 'mission-control-demo',
-                        uptime: 99.7,
-                        complianceScore: 94
-                    }
-                }),
+            const data = await chainAnchorBreaker.execute(async () => {
+                const response = await fetch(`${CHAIN_ANCHOR_API}/api/anchor`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        proofHash,
+                        proofType: 'sla',
+                        agentDid: 'did:web:mission-control.berlin-ai-labs.de',
+                        metadata: {
+                            source: 'mission-control-demo',
+                            uptime: 99.7,
+                            complianceScore: 94
+                        }
+                    }),
+                });
+                if (!response.ok) throw new Error('Anchor failed');
+                return response.json();
             });
-
-            if (!response.ok) throw new Error('Anchor failed');
-
-            const data = await response.json();
             setResult(data);
         } catch (err) {
-            setError('Failed to connect to Chain Anchor. Service may be starting up.');
+            const cbStatus = chainAnchorBreaker.getStatus();
+            if (cbStatus.state === 'OPEN') {
+                setError(`Circuit breaker OPEN after ${cbStatus.failures} failures — auto-recovery in 30s.`);
+            } else {
+                setError('Failed to connect to Chain Anchor. Service may be starting up.');
+            }
             console.error('Chain Anchor error:', err);
         } finally {
             setIsAnchoring(false);
@@ -62,9 +73,16 @@ export function ChainAnchorPanel() {
                     <h3 className="text-lg font-semibold text-white">Chain Anchor</h3>
                     <p className="text-xs text-gray-500">Immutable SLA proofs on Solana</p>
                 </div>
-                <span className="ml-auto px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
-                    LIVE
-                </span>
+                <div className="ml-auto flex items-center gap-2">
+                    {chainAnchorBreaker.getStatus().state !== 'CLOSED' && (
+                        <span className={`px-2 py-0.5 text-[10px] rounded-full border font-bold ${chainAnchorBreaker.getStatus().state === 'OPEN' ? 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse' : 'bg-amber-500/20 text-amber-400 border-amber-500/30'}`}>
+                            CIRCUIT {chainAnchorBreaker.getStatus().state}
+                        </span>
+                    )}
+                    <span className="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                        LIVE
+                    </span>
+                </div>
             </div>
 
             <div className="space-y-4">

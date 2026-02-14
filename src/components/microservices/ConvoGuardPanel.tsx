@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { getCircuitBreaker } from '@/infrastructure/CircuitBreaker';
 
 const CONVOGUARD_API = 'https://convo-guard-ai-production.up.railway.app';
+const convoGuardBreaker = getCircuitBreaker('convoguard', { failureThreshold: 3, recoveryTimeMs: 30000 });
 
 interface ValidationResult {
     compliant: boolean;
@@ -62,28 +64,38 @@ export function ConvoGuardPanel() {
     const testCompliance = async () => {
         if (!input.trim()) return;
 
+        // Circuit breaker check
+        if (!convoGuardBreaker.canExecute()) {
+            setError('Circuit breaker OPEN — ConvoGuard service degraded. Auto-recovery in progress.');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         setResult(null);
 
         try {
-            // Switch endpoint based on local ML toggle
-            const endpoint = useLocalML ? '/api/ml-validate' : '/api/validate';
-            const response = await fetch(`${CONVOGUARD_API}${endpoint}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    transcript: input,
-                    policyPackId: selectedPolicy
-                }),
+            const result = await convoGuardBreaker.execute(async () => {
+                const endpoint = useLocalML ? '/api/ml-validate' : '/api/validate';
+                const response = await fetch(`${CONVOGUARD_API}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript: input,
+                        policyPackId: selectedPolicy
+                    }),
+                });
+                if (!response.ok) throw new Error('Validation failed');
+                return response.json();
             });
-
-            if (!response.ok) throw new Error('Validation failed');
-
-            const data = await response.json();
-            setResult(data);
+            setResult(result);
         } catch (err) {
-            setError('Verbindung zu ConvoGuard fehlgeschlagen. Dienst startet möglicherweise.');
+            const cbStatus = convoGuardBreaker.getStatus();
+            if (cbStatus.state === 'OPEN') {
+                setError(`Circuit breaker OPEN after ${cbStatus.failures} failures — service degraded. Auto-recovery in ${Math.ceil(30000 / 1000)}s.`);
+            } else {
+                setError('Verbindung zu ConvoGuard fehlgeschlagen. Dienst startet möglicherweise.');
+            }
             console.error('ConvoGuard error:', err);
         } finally {
             setIsLoading(false);
@@ -259,11 +271,16 @@ export function ConvoGuardPanel() {
                     <h3 className="text-lg font-semibold text-white uppercase tracking-tight">DiGA Compliance Copilot</h3>
                     <p className="text-xs text-gray-400 font-mono">Echtzeit-Regulierungsprüfung</p>
                 </div>
-                <div className="ml-auto flex flex-col items-end">
+                <div className="ml-auto flex flex-col items-end gap-1">
                     <span className="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
                         BfArM-BEREIT
                     </span>
-                    <span className="text-[10px] text-gray-500 mt-1 uppercase">Berlin AI Labs</span>
+                    {convoGuardBreaker.getStatus().state !== 'CLOSED' && (
+                        <span className={`px-2 py-0.5 text-[10px] rounded-full border font-bold ${convoGuardBreaker.getStatus().state === 'OPEN' ? 'bg-red-500/20 text-red-400 border-red-500/30 animate-pulse' : 'bg-amber-500/20 text-amber-400 border-amber-500/30'}`}>
+                            CIRCUIT {convoGuardBreaker.getStatus().state}
+                        </span>
+                    )}
+                    <span className="text-[10px] text-gray-500 uppercase">Berlin AI Labs</span>
                 </div>
             </div>
 

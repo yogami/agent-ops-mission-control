@@ -2,6 +2,7 @@
 
 import { SEED_AGENTS } from '@/infrastructure/seedAgents';
 import { PoEVerificationPanel, GDPRConsentChecker } from '@/components/gdpr';
+import MaturityModel from '@/components/gdpr/MaturityModel';
 import Link from 'next/link';
 
 // GDPR Article coverage data - real implementations from the codebase
@@ -118,11 +119,17 @@ export default function GDPRDashboardPage() {
                         ← Mission Control
                     </Link>
                     <div className="flex items-center gap-3">
+                        <Link href="/transparency" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
+                            Transparency
+                        </Link>
+                        <Link href="/benchmarks" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
+                            Benchmarks
+                        </Link>
+                        <Link href="/validation" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
+                            Validation
+                        </Link>
                         <Link href="/audit" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
                             Clinical Audit →
-                        </Link>
-                        <Link href="/fast-audit" className="text-sm text-gray-500 hover:text-cyan-400 transition-colors">
-                            Fast Audit →
                         </Link>
                     </div>
                 </div>
@@ -348,6 +355,20 @@ export default function GDPRDashboardPage() {
                     <p className="text-[10px] text-gray-600 italic">
                         Methodology: Vitest test suite on curated conversation fixtures. Crisis recall prioritized over precision — false positives acceptable, false negatives not.
                     </p>
+                </div>
+
+                {/* Agent Maturity Model */}
+                <div className="glass-card p-6 mb-8">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                        <span>🎯</span> Agent Maturity Model
+                        <span className="ml-auto px-2 py-0.5 text-[10px] bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20 font-bold">
+                            4-LEVEL GOVERNANCE
+                        </span>
+                    </h3>
+                    <p className="text-xs text-gray-400 mb-4">
+                        Structured promotion system: agents earn autonomy through proven compliance track records.
+                    </p>
+                    <MaturityModel />
                 </div>
 
                 {/* Transparency & Known Limitations */}

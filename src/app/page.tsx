@@ -123,6 +123,9 @@ export default function Home() {
           </div>
           <div className="flex gap-6 text-gray-500 text-sm">
             <Link href="/gdpr" className="hover:text-cyan-400 transition-colors">GDPR Center</Link>
+            <Link href="/transparency" className="hover:text-cyan-400 transition-colors">Transparency</Link>
+            <Link href="/benchmarks" className="hover:text-cyan-400 transition-colors">Benchmarks</Link>
+            <Link href="/validation" className="hover:text-cyan-400 transition-colors">Validation</Link>
             <Link href="/audit" className="hover:text-white transition-colors">Audit</Link>
             <a href="mailto:contact@berlin-ai-labs.de" className="hover:text-white transition-colors">Contact</a>
             <span>Berlin, Germany</span>

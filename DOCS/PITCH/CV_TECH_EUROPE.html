@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Yami Gopal - Data & Automation Engineer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 36px 28px;
+            line-height: 1.55;
+            color: #2d2d2d;
+            font-size: 13.5px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: #111;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .contact {
+            font-size: 12.5px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        .contact a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        h2 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 22px 0 8px 0;
+            color: #111;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #111;
+            padding-bottom: 4px;
+        }
+
+        h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 14px 0 4px 0;
+            color: #222;
+        }
+
+        .role-meta {
+            font-size: 12.5px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        p {
+            margin-bottom: 6px;
+        }
+
+        ul {
+            padding-left: 18px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0 14px 0;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 7px 10px;
+            text-align: left;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+        }
+
+        td a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+            margin: 8px 0;
+        }
+
+        .skill-item {
+            font-size: 13px;
+        }
+
+        .skill-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-note {
+            font-size: 12.5px;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Yami Gopal</h1>
+    <p class="subtitle">Data & Automation Engineer</p>
+    <p class="contact">
+        gopal.yami@gmail.com · +49 163 337 7537 · Berlin, Germany<br>
+        <a href="https://berlinailabs.de">berlinailabs.de</a> ·
+        <a href="https://www.linkedin.com/in/yami-g-b170294/">LinkedIn</a>
+    </p>
+
+    <h2>Summary</h2>
+    <p>Automation engineer with 20 years of hands-on experience connecting systems, cleaning data, and turning manual
+        processes into reliable workflows. Currently running Berlin AI Labs, where I build and maintain production
+        automation systems using APIs, webhooks, and workflow orchestration tools. Previously worked as an agile coach
+        helping enterprise teams at Boehringer Ingelheim, FlixBus, and John Deere identify bottlenecks and automate them
+        away, and as a software engineer building backend integrations at Disney, FedEx, and Ingram Micro. I am
+        practical, detail-oriented, and I ship things that work without breaking.</p>
+
+    <h2>Relevant Experience</h2>
+
+    <h3>Founder & Automation Engineer — Berlin AI Labs</h3>
+    <p class="role-meta">2022 – Present · Berlin, Germany</p>
+    <p>Running a small studio that builds workflow automation and data systems. Everything I build is live in production
+        with automated deployments and monitoring on Railway.</p>
+
+    <table>
+        <tr>
+            <th>System</th>
+            <th>What It Does</th>
+            <th>Link</th>
+        </tr>
+        <tr>
+            <td>AgentOps Mission Control</td>
+            <td>Operations dashboard that pulls data from multiple APIs, normalizes it, and shows real-time system
+                health. Built automated alerting, status tracking, and event monitoring workflows.</td>
+            <td><a href="https://agent-ops-mission-control-production.up.railway.app">Live</a></td>
+        </tr>
+        <tr>
+            <td>ConvoGuard</td>
+            <td>Data pipeline that scans incoming messages in real time, detects sensitive information, and routes it
+                for GDPR compliance. Connects via webhooks with automatic retries and error handling.</td>
+            <td><a href="https://convoguard-ai-production.up.railway.app">Live</a></td>
+        </tr>
+        <tr>
+            <td>Lead & Invoice Automation</td>
+            <td>End-to-end workflow connecting web forms to CRMs and accounting tools. Handles data cleaning,
+                deduplication, validation, and automated notification emails for German SMBs.</td>
+            <td>Client production</td>
+        </tr>
+        <tr>
+            <td>Agent Pentest CLI</td>
+            <td>Open-source CLI tool published to npm that automates API security testing across 41 test vectors. Runs
+                as a single command with structured output.</td>
+            <td><a href="https://www.npmjs.com/package/agent-pentest">npm</a></td>
+        </tr>
+        <tr>
+            <td>Event Registration Systems</td>
+            <td>Built automated registration and check-in flows for community events. Form submission triggers webhook
+                chains that validate data, send confirmations, and update tracking spreadsheets.</td>
+            <td>Internal</td>
+        </tr>
+    </table>
+
+    <p><strong>How I work:</strong> I connect tools via APIs and webhooks (forms, email, CRMs, databases, Slack). I
+        build workflows with triggers, conditional routing, retries, and error handling so they run unattended. I clean
+        and normalize messy data so downstream systems get reliable inputs. I set up dashboards and monitoring so
+        non-technical teammates can see what is happening. I write automated tests and set up CI/CD so nothing deploys
+        broken.</p>
+
+    <h3>Agile Coach & Process Automation Consultant</h3>
+    <p class="role-meta">2015 – 2022 · Boehringer Ingelheim, FlixBus, John Deere, Yara International</p>
+    <ul>
+        <li>Identified manual bottlenecks in engineering and operations teams, then proposed and built technical
+            solutions to eliminate them</li>
+        <li>Coached product owners on using data to prioritize work and measure outcomes instead of guessing</li>
+        <li>Set up automated reporting dashboards, CI/CD pipelines, and workflow tools for cross-functional teams</li>
+        <li>Facilitated workshops helping teams map their processes and find automation opportunities</li>
+        <li>Led agile adoption for teams of 10 to 50 people across pharma, mobility, agriculture, and logistics</li>
+    </ul>
+
+    <h3>Software Engineer & Backend Developer</h3>
+    <p class="role-meta">2005 – 2015 · The Walt Disney Company, FedEx, Ingram Micro</p>
+    <ul>
+        <li>Built backend API integrations connecting enterprise systems (ERPs, CRMs, logistics platforms)</li>
+        <li>Developed automated data processing pipelines and reporting tools for large-scale operations</li>
+        <li>Implemented system-to-system integrations via REST APIs, message queues, and batch processing</li>
+        <li>Created automated testing and deployment workflows that reduced release cycles from weeks to days</li>
+    </ul>
+
+    <h2>Skills</h2>
+    <div class="skills-grid">
+        <div class="skill-item"><span class="skill-label">Automation:</span> API integrations, webhooks, n8n, workflow
+            orchestration, cron jobs, event-driven triggers, retries and error handling</div>
+        <div class="skill-item"><span class="skill-label">Data:</span> Cleaning, deduplication, validation,
+            normalization, GDPR compliance, audit trails, structured reporting</div>
+        <div class="skill-item"><span class="skill-label">Stack:</span> TypeScript, Node.js, Python, SQL, Railway,
+            GitHub Actions, REST APIs, CLI tooling, Docker</div>
+        <div class="skill-item"><span class="skill-label">Operations:</span> Monitoring, incident response, automated
+            testing (Jest, Playwright), CI/CD pipelines, system health dashboards</div>
+    </div>
+
+    <h2>Education & Languages</h2>
+    <p>
+        <strong>M.Sc. Electrical Engineering</strong> — Tennessee Tech University, USA<br>
+        <strong>B.E. Electrical Engineering</strong> — College of Engineering, Pune, India<br>
+        Certified ScrumMaster (CSM) · Certified Agile Leadership<br>
+        English C2 (native) · German B2 (professional)
+    </p>
+
+    <h2>Why {Tech: Europe}</h2>
+    <p>I have been watching what you are building and I think it is exactly the kind of operation that benefits from
+        someone like me. You are running large-scale hackathons and community events across Europe, which means
+        applicant tracking, registrations, check-ins, team matching, and communications all need to work smoothly at
+        scale. That is what I do. I build the automation that connects your tools, keeps your data clean, and lets your
+        team focus on the community instead of fighting spreadsheets. I have done this for enterprise teams at Fortune
+        500 companies and for my own production systems. I would love to do it for {Tech: Europe}.</p>
+
+</body>
+
+</html>

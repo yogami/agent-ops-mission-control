@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Ops Mission Control — One-Pager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 14mm 16mm 12mm 16mm;
+            color: #1a1a2e;
+            background: #fff;
+            font-size: 9.2pt;
+            line-height: 1.38;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2.5px solid #0f3460;
+        }
+
+        .header-left h1 {
+            font-size: 17pt;
+            font-weight: 800;
+            color: #0f3460;
+            letter-spacing: -0.5px;
+            margin-bottom: 2px;
+        }
+
+        .header-left .subtitle {
+            font-size: 9pt;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 7.8pt;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .header-right a {
+            color: #0f3460;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Hero Problem */
+        .hero {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a5e 100%);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .hero h2 {
+            font-size: 11.5pt;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .hero p {
+            font-size: 9pt;
+            line-height: 1.4;
+            opacity: 0.92;
+        }
+
+        .hero .stat-row {
+            display: flex;
+            gap: 18px;
+            margin-top: 7px;
+        }
+
+        .hero .stat {
+            text-align: center;
+        }
+
+        .hero .stat .num {
+            font-size: 16pt;
+            font-weight: 800;
+            color: #e94560;
+        }
+
+        .hero .stat .label {
+            font-size: 7pt;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+
+        /* Two-column layout */
+        .columns {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 8px;
+        }
+
+        .col-left {
+            flex: 1.15;
+        }
+
+        .col-right {
+            flex: 0.85;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 8px;
+        }
+
+        .section h3 {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #0f3460;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            padding-bottom: 2px;
+            border-bottom: 1.5px solid #e0e4ea;
+        }
+
+        .section p {
+            font-size: 8.8pt;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        /* Feature list */
+        .features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            font-size: 8.6pt;
+            padding: 3px 0 3px 14px;
+            position: relative;
+            color: #333;
+        }
+
+        .features li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #e94560;
+            font-weight: 700;
+            font-size: 9pt;
+        }
+
+        .features li strong {
+            color: #0f3460;
+        }
+
+        /* Metrics table */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 4px;
+        }
+
+        .metric-card {
+            background: #f4f6fa;
+            border-radius: 4px;
+            padding: 6px 8px;
+            text-align: center;
+            border-left: 3px solid #0f3460;
+        }
+
+        .metric-card .val {
+            font-size: 13pt;
+            font-weight: 800;
+            color: #0f3460;
+        }
+
+        .metric-card .desc {
+            font-size: 7pt;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Trust box */
+        .trust-box {
+            background: #f8f4ff;
+            border: 1.5px solid #7c3aed;
+            border-radius: 5px;
+            padding: 8px 10px;
+            margin-top: 4px;
+        }
+
+        .trust-box h4 {
+            font-size: 8.8pt;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 3px;
+        }
+
+        .trust-box p {
+            font-size: 8.2pt;
+            color: #444;
+        }
+
+        .trust-elements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .trust-el {
+            background: #7c3aed;
+            color: white;
+            font-size: 7pt;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        /* Validation */
+        .validation-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .validation-item {
+            background: #ecfdf5;
+            border: 1px solid #86efac;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 7.8pt;
+            color: #166534;
+            font-weight: 500;
+        }
+
+        .validation-item::before {
+            content: "✓ ";
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1.5px solid #e0e4ea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 7.5pt;
+            color: #888;
+        }
+
+        .footer .brand {
+            font-weight: 700;
+            color: #0f3460;
+            font-size: 9pt;
+        }
+
+        @media print {
+            body {
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <h1>Agent Ops Mission Control</h1>
+            <div class="subtitle">A Compliance Firewall & Governance Platform for AI Agent Fleets</div>
+        </div>
+        <div class="header-right">
+            <strong>Berlin AI Labs</strong><br>
+            Gopalkrishna Yamijala · Berlin, Germany<br>
+            <a href="https://agent-ops-mission-control-production.up.railway.app">Live Platform</a> · <a
+                href="https://berlinailabs.de">berlinailabs.de</a>
+        </div>
+    </div>
+
+    <!-- HERO PROBLEM -->
+    <div class="hero">
+        <h2>The EU AI Act Takes Effect August 2026</h2>
+        <p>AI systems in healthcare, finance, and insurance are classified high-risk — facing fines up to €35M for
+            non-compliance. Enterprises deploying autonomous AI agents need runtime governance: not monitoring, not
+            logs, but real-time enforcement. No production-ready solution exists today.</p>
+        <div class="stat-row">
+            <div class="stat">
+                <div class="num">€35M</div>
+                <div class="label">Max Fine per Violation</div>
+            </div>
+            <div class="stat">
+                <div class="num">Aug '26</div>
+                <div class="label">Enforcement Deadline</div>
+            </div>
+            <div class="stat">
+                <div class="num">0</div>
+                <div class="label">Production Solutions Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLUMNS -->
+    <div class="columns">
+
+        <!-- LEFT COLUMN -->
+        <div class="col-left">
+
+            <div class="section">
+                <h3>What We Built</h3>
+                <p>Mission Control is a <strong>real-time compliance firewall</strong> that enforces regulatory rules on
+                    every AI agent conversation — preventing violations before they happen.</p>
+                <ul class="features">
+                    <li><strong>GDPR Enforcement</strong> — 8 articles enforced with working code: consent detection,
+                        crisis intervention, data residency, transparency</li>
+                    <li><strong>Local AI Firewall</strong> — Checks every conversation in 8ms median latency. No data
+                        leaves the device. No cloud dependency</li>
+                    <li><strong>Fast Audit</strong> — Paste any AI transcript, get a compliance report with
+                        regulator-ready XML documentation in seconds</li>
+                    <li><strong>Containment</strong> — Circuit breakers halt rogue agents instantly. Kill switches
+                        enforce human override</li>
+                    <li><strong>Security Testing</strong> — Open-source CLI on npm (agent-pentest) runs 41 adversarial
+                        attack vectors against any AI endpoint</li>
+                    <li><strong>Integration Exports</strong> — REST API, Webhooks, BfArM XML, SIEM (Splunk/Datadog), PDF
+                        Audit Reports</li>
+                </ul>
+            </div>
+
+            <!-- Trust Box -->
+            <div class="trust-box">
+                <h4>⚡ Independent Innovation — Validated by Industry</h4>
+                <p>We independently built the Agent Trust Protocol and PDP Protocol (Proof of Delivery)
+                    <strong>before</strong> the Cloud Security Alliance published their Agentic Trust Framework. When
+                    their specification was released, it confirmed the architecture we had already deployed:</p>
+                <div class="trust-elements">
+                    <span class="trust-el">Agent Identity</span>
+                    <span class="trust-el">Behavioral Auditing</span>
+                    <span class="trust-el">Data Governance</span>
+                    <span class="trust-el">Access Segmentation</span>
+                    <span class="trust-el">Incident Response</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-right">
+
+            <div class="section">
+                <h3>Benchmarks (Publicly Verifiable)</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="val">97%</div>
+                        <div class="desc">Crisis Detection (F1: 0.97, n=312)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">96%</div>
+                        <div class="desc">Consent Precision (F1: 0.94, n=847)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">8ms</div>
+                        <div class="desc">Median Latency (Local)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="val">12</div>
+                        <div class="desc">Deployed Microservices</div>
+                    </div>
+                </div>
+                <p style="font-size: 7.5pt; color: #888; margin-top: 4px;">All benchmarks verifiable at
+                    <em>/api/gdpr/benchmarks</em>. Known limitations disclosed on public transparency page.</p>
+            </div>
+
+            <div class="section">
+                <h3>Agent Governance</h3>
+                <ul class="features">
+                    <li><strong>Reputation Registry</strong> — Every agent gets a verified compliance score based on
+                        audits and behavioral analysis</li>
+                    <li><strong>Maturity Model</strong> — 4-level progression (Intern → Junior → Senior → Principal)
+                        with automated promotion gates</li>
+                    <li><strong>Cryptographic Proofs</strong> — Immutable audit trail anchoring every agent action for
+                        regulatory non-repudiation</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Validation</h3>
+                <div class="validation-row">
+                    <span class="validation-item">CIC Berlin Demo</span>
+                    <span class="validation-item">HelloBetter Founder Feedback</span>
+                    <span class="validation-item">Open Source on GitHub</span>
+                    <span class="validation-item">agent-pentest on npm</span>
+                    <span class="validation-item">Live on Railway</span>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Why Rising Innovators</h3>
+                <p>Every enterprise deploying AI agents in Europe will need runtime governance by August 2026. The
+                    market has published specifications — <strong>we shipped production code first</strong>. Zürich
+                    recognition connects this infrastructure to the enterprises and partners who need it most.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div>
+            <span class="brand">Berlin AI Labs</span> · GenAI Zürich Award 2026 · Rising Innovators Track
+        </div>
+        <div>
+            gopal.yami@gmail.com · berlinailabs.de
+        </div>
+    </div>
+
+</body>
+
+</html>
